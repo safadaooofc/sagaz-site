@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: #eab308;
+  --color-primary-hover: #ca8a04;
+  --color-discord: #5865F2;
+  --color-discord-hover: #4752C4;
+  --color-telegram: #229ED9;
+  --color-telegram-hover: #1c82b1;
+  --color-surface: #1e2128;
+  --color-surface-hover: #262933;
+  --color-border: #333845;
+  
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  /* Forcing Dark Mode colors globally */
+  --background: #0f1115;
+  --foreground: #f3f4f6;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
