@@ -1,112 +1,186 @@
+"use client";
 import Link from "next/link";
-import { ArrowLeft, Eye } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const [step, setStep] = useState(1);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, isRegister: true }),
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erro ao solicitar código");
+      
+      setSuccess("Código enviado com sucesso para o seu e-mail!");
+      setStep(2);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegisterAndLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        code,
+        name,
+        isRegister: "true",
+        redirect: false,
+      });
+
+      if (res?.error) {
+        throw new Error(res.error);
+      }
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0f1115] flex flex-col items-center justify-center p-4 relative font-sans">
       <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-[#9ca3af] hover:text-white transition-colors text-sm font-medium">
-        <ArrowLeft size={16} />
-        Voltar
+        <ArrowLeft size={16} /> Voltar
       </Link>
       
-      <div className="w-full max-w-[400px] my-12">
+      <div className="w-full max-w-[400px]">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Criar sua conta</h1>
-          <p className="text-sm text-[#9ca3af]">Digite seus dados para criar uma conta na KNIGHT</p>
+          <h1 className="text-3xl font-bold text-white mb-2">{step === 1 ? "Crie sua conta" : "Verificação de Segurança"}</h1>
+          <p className="text-sm text-[#9ca3af]">
+            {step === 1 ? "Preencha os dados abaixo para se cadastrar" : "Digite o código de 6 dígitos que enviamos para o seu e-mail"}
+          </p>
         </div>
         
-        <form className="space-y-4">
-          <div>
-            <label className="block text-sm font-bold text-white mb-2">Nome completo</label>
-            <input 
-              type="text" 
-              className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
-              placeholder="Digite seu nome completo"
-            />
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm mb-4 text-center">
+            {error}
           </div>
+        )}
 
-          <div>
-            <label className="block text-sm font-bold text-white mb-2">Email</label>
-            <input 
-              type="email" 
-              className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
-              placeholder="seu@email.com"
-            />
+        {success && (
+          <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-3 rounded-lg text-sm mb-4 text-center">
+            {success}
           </div>
-          
-          <div>
-            <label className="block text-sm font-bold text-white mb-2">Senha</label>
-            <div className="relative">
-              <input 
-                type="password" 
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors pr-10"
-                placeholder="Digite sua senha"
-              />
-              <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4b5563] hover:text-[#9ca3af]">
-                <Eye size={18} />
-              </button>
-            </div>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-bold text-white mb-2">Confirmar senha</label>
-            <div className="relative">
-              <input 
-                type="password" 
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors pr-10"
-                placeholder="Confirme sua senha"
-              />
-              <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4b5563] hover:text-[#9ca3af]">
-                <Eye size={18} />
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold text-white mb-2">ID de indicação (opcional)</label>
-            <div className="flex gap-2">
+        )}
+        
+        {step === 1 ? (
+          <form className="space-y-4" onSubmit={handleSendOtp}>
+            <div>
+              <label className="block text-sm font-bold text-white mb-2">Nome de Usuário</label>
               <input 
                 type="text" 
-                className="flex-1 bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
-                placeholder="Cole o ID de indicação aqui"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
+                placeholder="Seu nome"
               />
-              <button type="button" className="bg-[#181a20] text-[#4b5563] font-bold px-4 rounded-lg">
-                Validar
-              </button>
             </div>
-            <p className="text-[11px] text-[#4b5563] mt-1">Se alguém te indicou, cole o ID de indicação aqui.</p>
-          </div>
+            <div>
+              <label className="block text-sm font-bold text-white mb-2">Email</label>
+              <input 
+                type="email" 
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
+                placeholder="seu@email.com"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-white mb-2">Senha</label>
+              <input 
+                type="password" 
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors tracking-widest"
+                placeholder="••••••••"
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              disabled={loading || !email || !password || !name}
+              className="w-full bg-white hover:bg-gray-200 text-black font-bold text-sm py-3.5 rounded-lg transition-colors flex justify-center items-center gap-2 mt-4 disabled:opacity-50"
+            >
+              {loading ? <Loader2 size={16} className="animate-spin" /> : "Criar conta e Continuar"}
+            </button>
+          </form>
+        ) : (
+          <form className="space-y-4" onSubmit={handleRegisterAndLogin}>
+            <div>
+              <label className="block text-sm font-bold text-white mb-2">Código de 6 dígitos</label>
+              <input 
+                type="text" 
+                required
+                maxLength={6}
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors text-center text-xl tracking-[0.5em]"
+                placeholder="000000"
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              disabled={loading || code.length !== 6}
+              className="w-full bg-white hover:bg-gray-200 text-black font-bold text-sm py-3.5 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
+            >
+              {loading ? <Loader2 size={16} className="animate-spin" /> : "Validar Código"}
+            </button>
 
-          <div>
-            <label className="block text-sm font-bold text-white mb-2">Verificação de segurança</label>
-            <div className="w-full bg-[#181a20] border border-transparent rounded-lg p-4 flex justify-center">
-              {/* reCAPTCHA mockup */}
-              <div className="w-[300px] h-[74px] bg-[#222222] border border-[#333333] rounded-[3px] flex items-center px-3 justify-between shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 bg-white border-2 border-[#c1c1c1] rounded-[2px] flex items-center justify-center">
-                    {/* Checkmark would go here */}
-                  </div>
-                  <span className="text-[14px] text-white">Não sou um robô</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" className="w-8 opacity-90" />
-                  <span className="text-[10px] text-[#9ca3af] mt-1">reCAPTCHA</span>
-                  <div className="text-[8px] text-[#9ca3af] flex gap-1">
-                    <span>Privacidade</span>-<span>Termos</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <button type="button" className="w-full bg-[#181a20] text-[#9ca3af] font-bold text-sm py-3.5 rounded-lg transition-colors mt-2 cursor-not-allowed">
-            Criar conta
-          </button>
-        </form>
+            <button 
+              type="button"
+              onClick={() => {
+                setStep(1);
+                setSuccess("");
+                setCode("");
+              }}
+              className="w-full bg-transparent text-[#9ca3af] hover:text-white font-medium text-sm py-2 transition-colors"
+            >
+              Voltar e corrigir dados
+            </button>
+          </form>
+        )}
         
-        <div className="mt-6 text-center text-sm text-[#9ca3af]">
-          Já tem uma conta? <Link href="/login" className="text-white hover:underline font-medium underline">Fazer login</Link>
-        </div>
+        {step === 1 && (
+          <div className="mt-6 text-center text-sm text-[#9ca3af]">
+            Já tem uma conta? <Link href="/login" className="text-white hover:underline font-medium underline">Fazer login</Link>
+          </div>
+        )}
       </div>
     </div>
   );

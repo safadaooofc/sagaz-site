@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { checkRateLimit } from '@/lib/rateLimit';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
@@ -16,18 +19,28 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email, password, isRegister } = body;
 
-    if (!email || !password) {
-      return NextResponse.json({ error: "E-mail e senha são obrigatórios" }, { status: 400 });
+    // Backend Validations
+    if (!email || typeof email !== 'string') {
+      return NextResponse.json({ error: "E-mail é obrigatório" }, { status: 400 });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: "E-mail inválido" }, { status: 400 });
+    }
+
+    if (!password || typeof password !== 'string') {
+      return NextResponse.json({ error: "Senha é obrigatória" }, { status: 400 });
+    }
+    if (password.length < 6) {
+      return NextResponse.json({ error: "A senha deve ter pelo menos 6 caracteres" }, { status: 400 });
     }
 
     if (isRegister) {
-      // Check if user already exists
       const existing = await prisma.user.findUnique({ where: { email } });
       if (existing) {
         return NextResponse.json({ error: "Este e-mail já está em uso" }, { status: 400 });
       }
     } else {
-      // Login mode
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user || !user.password) {
         return NextResponse.json({ error: "Credenciais inválidas" }, { status: 401 });
@@ -42,23 +55,41 @@ export async function POST(req: Request) {
     // Generate 6-digit OTP
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // Clear old codes for this email
+    // Clear old codes and save new one
     await prisma.otpCode.deleteMany({ where: { email } });
-
-    // Save new code (valid for 10 minutes)
     await prisma.otpCode.create({
-      data: {
-        email,
-        code,
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000)
-      }
+      data: { email, code, expiresAt: new Date(Date.now() + 10 * 60 * 1000) }
     });
 
-    // MOCK EMAIL SENDING
-    console.log(`\n\n=========================================`);
-    console.log(`📧 E-MAIL ENVIADO PARA: ${email}`);
-    console.log(`🔑 CÓDIGO OTP: ${code}`);
-    console.log(`=========================================\n\n`);
+    // Send email using Resend with a premium dark-mode HTML template
+    const emailHtml = `
+      <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; background-color: #0f1115; color: #ffffff; padding: 40px 20px; text-align: center; border-radius: 8px;">
+        <div style="max-width: 500px; margin: 0 auto; background-color: #181a20; padding: 40px; border-radius: 12px; border: 1px solid #262933;">
+          <h1 style="color: #ffffff; font-size: 28px; margin-bottom: 8px; letter-spacing: -1px;">KNIGHT</h1>
+          <p style="color: #9ca3af; font-size: 16px; margin-bottom: 32px;">Código de Verificação de Segurança</p>
+          
+          <div style="background-color: #0f1115; border: 1px solid #262933; padding: 24px; border-radius: 8px; margin-bottom: 32px;">
+            <p style="color: #9ca3af; font-size: 14px; margin-bottom: 12px; margin-top: 0;">Seu código de acesso é:</p>
+            <h2 style="color: #eab308; font-size: 36px; letter-spacing: 8px; margin: 0;">${code}</h2>
+          </div>
+          
+          <p style="color: #6b7280; font-size: 13px; margin-bottom: 8px;">Este código expira em 10 minutos.</p>
+          <p style="color: #6b7280; font-size: 13px; margin-bottom: 0;">Se você não solicitou este acesso, por favor ignore este e-mail.</p>
+        </div>
+      </div>
+    `;
+
+    const { data, error } = await resend.emails.send({
+      from: 'KNIGHT <onboarding@resend.dev>', // Change onboarding@resend.dev to your verified domain later
+      to: [email],
+      subject: `Seu código de verificação é ${code}`,
+      html: emailHtml,
+    });
+
+    if (error) {
+      console.error("Resend Error:", error);
+      return NextResponse.json({ error: "Erro ao enviar e-mail" }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true, message: "Código enviado" });
 
