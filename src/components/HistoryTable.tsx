@@ -30,13 +30,16 @@ export function HistoryTable() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              </td>
+            <tr className="border-b border-[#262933] last:border-0 hover:bg-[#181a20] transition-colors">
+              <td className="px-4 py-3">N/A</td>
+              <td className="px-4 py-3 text-center">-</td>
+              <td className="px-4 py-3 text-center">-</td>
+              <td className="px-4 py-3 text-center">-</td>
+              <td className="px-4 py-3 text-center">-</td>
               <td className="px-4 py-3 text-right">
-                <button className="text-primary hover:underline font-medium text-xs">Ver Resgate</button>
+                <button className="text-[#9ca3af] hover:text-white transition-colors text-[13px]">Ver Detalhes</button>
               </td>
             </tr>
-            */}
           </tbody>
         </table>
       </div>

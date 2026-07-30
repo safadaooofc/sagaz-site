@@ -17,9 +17,11 @@ model User {
   telegramId    String?
   balance       Float           @default(0.0)
   role          String          @default("USER")
+  resellerDiscount Float        @default(0.0)
   accounts      Account[]
   sessions      Session[]
   transactions  Transaction[]
+  reviews       Review[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 }
@@ -83,6 +85,7 @@ model VerificationToken {
 
 model Product {
   id          String        @id @default(cuid())
+  categoryId  String?
   name        String
   description String?
   price       Float
@@ -91,7 +94,11 @@ model Product {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
+  category    Category?     @relation(fields: [categoryId], references: [id])
   transactions Transaction[]
+  stockItems   StockItem[]
+  reviews      Review[]
+  drops        DropCode[]
 }
 
 model Transaction {
@@ -105,4 +112,83 @@ model Transaction {
 
   user      User     @relation(fields: [userId], references: [id])
   product   Product  @relation(fields: [productId], references: [id])
+  stockItems StockItem[]
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  products  Product[]
+}
+
+model Coupon {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  discountPercent Float?
+  discountFixed   Float?
+  maxUses         Int      @default(0)
+  used            Int      @default(0)
+  active          Boolean  @default(true)
+  expiresAt       DateTime?
+  createdAt       DateTime @default(now())
+}
+
+model StockItem {
+  id            String   @id @default(cuid())
+  productId     String
+  content       String   @db.Text
+  isDelivered   Boolean  @default(false)
+  transactionId String?
+  createdAt     DateTime @default(now())
+
+  product       Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+}
+
+model SystemConfig {
+  key   String @id
+  value String @db.Text
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  rating    Int
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model SecurityLog {
+  id        String   @id @default(cuid())
+  ip        String
+  event     String
+  details   String?  @db.Text
+  createdAt DateTime @default(now())
+}
+
+model GiftCode {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  amount    Float
+  maxUses   Int      @default(1)
+  used      Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model DropCode {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  productId String
+  maxUses   Int      @default(1)
+  used      Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }

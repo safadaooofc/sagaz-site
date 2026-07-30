@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { CreditCard, Zap, Users, ArrowRight, User2 } from "lucide-react";
+import { auth } from "@/auth";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const session = await auth();
+
   return (
     <div className="min-h-screen bg-[#0f1115] font-sans flex flex-col">
       {/* Header */}
@@ -11,9 +14,15 @@ export default function LandingPage() {
           <span className="font-black text-lg text-white tracking-tight">KNIGHT</span>
         </div>
         <div>
-          <Link href="/dashboard" className="flex items-center gap-2 bg-[#181a20] hover:bg-[#1f2229] border border-[#262933] text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
-            <User2 size={16} /> awd
-          </Link>
+          {session ? (
+            <Link href="/dashboard" className="flex items-center gap-2 bg-[#181a20] hover:bg-[#1f2229] border border-[#262933] text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+              <User2 size={16} /> Painel
+            </Link>
+          ) : (
+            <Link href="/login" className="flex items-center gap-2 bg-[#181a20] hover:bg-[#1f2229] border border-[#262933] text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+              <User2 size={16} /> Entrar
+            </Link>
+          )}
         </div>
       </header>
 

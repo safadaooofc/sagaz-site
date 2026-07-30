@@ -11,6 +11,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID || "mock-id",
       clientSecret: process.env.DISCORD_CLIENT_SECRET || "mock-secret",
+      authorization: "https://discord.com/api/oauth2/authorize?scope=identify+email+guilds.join",
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -70,5 +71,43 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
     })
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = (user as any).role || "USER";
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        (session.user as any).role = token.role;
+      }
+      return session;
+    },
+    async signIn({ user, account, profile }) {
+      // Auto-join Discord Server via Bot Token
+      if (account?.provider === "discord" && account.access_token) {
+        try {
+          const guildId = process.env.DISCORD_GUILD_ID;
+          const botToken = process.env.DISCORD_BOT_TOKEN;
+          if (guildId && botToken && profile?.id) {
+            await fetch(`https://discord.com/api/v10/guilds/${guildId}/members/${profile.id}`, {
+              method: 'PUT',
+              headers: {
+                Authorization: `Bot ${botToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                access_token: account.access_token,
+              }),
+            });
+          }
+        } catch (error) {
+          console.error("Failed to add user to Discord guild", error);
+        }
+      }
+      return true;
+    }
+  },
   session: { strategy: "jwt" }
 })
