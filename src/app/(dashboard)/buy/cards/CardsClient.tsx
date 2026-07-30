@@ -1,6 +1,7 @@
 "use client";
 
 import { ShoppingCart, Shield, Search, ChevronDown, Calendar, CreditCard, Building2, ShieldCheck, Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { getAvailableCards, buyCard } from "./actions";
 
@@ -25,13 +26,13 @@ function CardBrandLogo({ brand, className }: { brand: string, className?: string
   if (asset) {
     return (
       <span className={`inline-flex h-9 max-h-9 min-w-[3.25rem] shrink-0 items-center justify-center rounded-md bg-transparent px-2 py-1 ${className}`} title={title}>
-        <img 
+        <Image 
           src={asset.src} 
           alt={title} 
           width={72} 
           height={36} 
           className={`max-h-7 w-auto max-w-[4.5rem] object-contain object-center ${asset.monochromeOnDark ? "brightness-0 invert opacity-90" : ""}`} 
-          loading="lazy" 
+          unoptimized
         />
         <span className="sr-only">{title}</span>
       </span>
@@ -102,6 +103,14 @@ export default function BuyCardsClient() {
   
   const verificationTimer = useRef<number | null>(null);
 
+  const resetVerificationState = () => {
+    if (verificationTimer.current) {
+      window.clearTimeout(verificationTimer.current);
+      verificationTimer.current = null;
+    }
+    setVerificationState("idle");
+  };
+
   useEffect(() => {
     async function loadData() {
       setLoading(true);
@@ -125,13 +134,7 @@ export default function BuyCardsClient() {
     return () => resetVerificationState();
   }, []);
 
-  const resetVerificationState = () => {
-    if (verificationTimer.current) {
-      window.clearTimeout(verificationTimer.current);
-      verificationTimer.current = null;
-    }
-    setVerificationState("idle");
-  };
+
 
   const startVerificationDelay = () => {
     if (verificationTimer.current) window.clearTimeout(verificationTimer.current);

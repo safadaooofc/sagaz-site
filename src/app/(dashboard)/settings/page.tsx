@@ -15,9 +15,9 @@ export default async function SettingsPage() {
       name: true,
       createdAt: true,
       discordId: true,
-      purchases: {
+      transactions: {
         select: {
-          price: true
+          total: true
         }
       }
     }
@@ -25,7 +25,7 @@ export default async function SettingsPage() {
 
   if (!user) redirect("/login");
 
-  const totalSpent = user.purchases.reduce((acc, curr) => acc + curr.price, 0);
+  const totalSpent = user.transactions.reduce((acc: number, curr: any) => acc + curr.total, 0);
 
   return <SettingsClient user={user} stats={{ totalSpent }} />;
 }
