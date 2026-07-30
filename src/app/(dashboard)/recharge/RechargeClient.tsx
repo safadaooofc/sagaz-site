@@ -277,7 +277,7 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
 
   const formatCurrency = (val: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
 
-  const getSliderAmount = () => Math.max(10, Math.round(10 + (sliderValue[0] / 100) * 490));
+  const getSliderAmount = () => Math.max(1, Math.round(1 + (sliderValue[0] / 100) * 499));
   
   const getBonusPercentage = (amount: number) => {
     let p = 0;
@@ -286,7 +286,7 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
     else if (amount >= 100) p = 10;
     else if (amount >= 50) p = 5;
 
-    if (isEligibleForReferralBonus && amount >= 10) p += 10;
+    if (isEligibleForReferralBonus && amount >= 1) p += 10;
     return p;
   };
 
@@ -304,7 +304,7 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
   const handlePresetSelect = (val: number) => {
     setPresetAmount(val);
     setCustomAmountStr("");
-    setSliderValue([Math.max(0, Math.min(100, ((val - 10) / 490) * 100))]);
+    setSliderValue([Math.max(0, Math.min(100, ((val - 1) / 499) * 100))]);
   };
 
   const handleCustomAmountChange = (val: string) => {
@@ -328,8 +328,8 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
     }
     setCustomAmountStr(clean);
     setPresetAmount(null);
-    if (parsed >= 10 && parsed <= 500) {
-      setSliderValue([Math.max(0, Math.min(100, ((parsed - 10) / 490) * 100))]);
+    if (parsed >= 1 && parsed <= 500) {
+      setSliderValue([Math.max(0, Math.min(100, ((parsed - 1) / 499) * 100))]);
     }
   };
 
@@ -441,7 +441,7 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
         </div>
       </div>
 
-      {isEligibleForReferralBonus && (
+      {isEligibleForReferralBonus ? (
         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-4 flex items-start gap-4 animate-in fade-in zoom-in">
           <div className="bg-yellow-500/20 text-yellow-500 p-3 rounded-full shrink-0">
             <Gift size={24} />
@@ -449,7 +449,19 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
           <div>
             <h3 className="text-yellow-500 font-bold text-lg mb-1">🎁 Bônus de Indicação Ativo</h3>
             <p className="text-yellow-500/80 text-sm leading-relaxed">
-              Você ganha <strong>+10% de Bônus Extra</strong> em qualquer recarga a partir de R$ 10,00 por usar um link de convite!
+              Você ganha <strong>+10% de Bônus Extra</strong> em qualquer recarga a partir de R$ 1,00 por usar um link de convite!
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-[#181a20] border border-[#262933] rounded-xl p-4 mb-4 flex items-start gap-4">
+          <div className="bg-[#262933] text-[#9ca3af] p-3 rounded-full shrink-0">
+            <Gift size={24} />
+          </div>
+          <div>
+            <h3 className="text-white font-bold text-base mb-1">Sabia que você poderia estar ganhando mais?</h3>
+            <p className="text-[#9ca3af] text-sm leading-relaxed">
+              Se você tivesse se cadastrado através de um link de convite, você estaria ganhando <strong>+10% de Bônus Extra</strong> {activeAmount > 0 ? `(+ ${formatCurrency(activeAmount * 0.10)})` : ""} nesta recarga!
             </p>
           </div>
         </div>
@@ -569,7 +581,7 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
                 />
               </div>
               <div className="flex justify-between text-xs text-[#9ca3af] px-2 font-medium">
-                <span>R$ 10,00</span>
+                <span>R$ 1,00</span>
                 <span>R$ 500,00</span>
               </div>
             </div>
@@ -589,8 +601,8 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
             </div>
 
             <button 
-              onClick={() => { if (activeAmount >= 10) setStep(2); else alert("Valor mínimo é R$ 10,00"); }}
-              disabled={activeAmount < 10}
+              onClick={() => { if (activeAmount >= 1) setStep(2); else alert("Valor mínimo é R$ 1,00"); }}
+              disabled={activeAmount < 1}
               className="w-full bg-[#eab308] hover:bg-[#ca8a04] text-black font-bold py-4 rounded-xl disabled:opacity-50 transition-colors"
             >
               Continuar para Pagamento

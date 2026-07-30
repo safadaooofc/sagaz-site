@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { Bell, CheckCircle, Info } from "lucide-react";
 
 type Notification = {
@@ -54,20 +55,31 @@ export function NotificationsMenu({ initialNotifications, unreadCount }: { initi
                 <p className="text-[#9ca3af] text-sm">Nenhuma notificação no momento</p>
               </div>
             ) : (
-              initialNotifications.map((n) => (
-                <div key={n.id} className="flex gap-3 p-3 rounded-lg hover:bg-[#262933] transition-colors cursor-pointer">
-                  <div className="mt-1">
-                    <Info size={16} className="text-[#eab308]" />
-                  </div>
-                  <div>
-                    <h4 className={`text-sm ${n.isRead ? 'text-[#9ca3af]' : 'text-white font-bold'}`}>{n.title}</h4>
-                    <p className="text-xs text-[#9ca3af] mt-1 line-clamp-2">{n.message}</p>
-                    <span className="text-[10px] text-[#4b5563] mt-2 block">
-                      {new Date(n.createdAt).toLocaleDateString('pt-BR')}
-                    </span>
-                  </div>
-                </div>
-              ))
+              initialNotifications.map((n) => {
+                let actionUrl = "/dashboard";
+                if (n.title.toLowerCase().includes("discord")) actionUrl = "/settings";
+                if (n.title.toLowerCase().includes("recarga")) actionUrl = "/recharge";
+
+                return (
+                  <Link 
+                    href={actionUrl}
+                    onClick={() => setIsOpen(false)}
+                    key={n.id} 
+                    className="flex gap-3 p-3 rounded-lg hover:bg-[#262933] transition-colors cursor-pointer"
+                  >
+                    <div className="mt-1">
+                      <Info size={16} className="text-[#eab308]" />
+                    </div>
+                    <div>
+                      <h4 className={`text-sm ${n.isRead ? 'text-[#9ca3af]' : 'text-white font-bold'}`}>{n.title}</h4>
+                      <p className="text-xs text-[#9ca3af] mt-1 line-clamp-2">{n.message}</p>
+                      <span className="text-[10px] text-[#4b5563] mt-2 block">
+                        {new Date(n.createdAt).toLocaleDateString('pt-BR')}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })
             )}
           </div>
         </div>

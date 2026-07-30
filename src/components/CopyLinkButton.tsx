@@ -6,9 +6,14 @@ import { useState } from "react";
 export function CopyLinkButton({ link }: { link: string }) {
   const [copied, setCopied] = useState(false);
 
+  // Calcula o link final no client-side para suportar links relativos
+  const fullLink = typeof window !== 'undefined' && link.startsWith('/')
+    ? `${window.location.origin}${link}`
+    : link;
+
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(link);
+      await navigator.clipboard.writeText(fullLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -19,7 +24,7 @@ export function CopyLinkButton({ link }: { link: string }) {
   return (
     <div className="flex gap-2 mb-4 flex-col sm:flex-row">
       <div className="flex-1 bg-[#1f2229] border border-[#2c303a] rounded-md px-4 py-3 flex items-center overflow-hidden">
-        <span className="text-[13px] text-white font-mono truncate">{link}</span>
+        <span className="text-[13px] text-white font-mono truncate">{fullLink}</span>
       </div>
       <button 
         onClick={handleCopy}

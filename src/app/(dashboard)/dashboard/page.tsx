@@ -174,18 +174,17 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-[1200px] mx-auto h-full flex flex-col font-sans px-4 sm:px-0 pt-4 pb-6">
       
-      <div className="bg-gradient-to-r from-[#eab308]/10 to-transparent border border-[#eab308]/20 rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden group">
-        <div className="absolute inset-0 bg-[#eab308]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        <div className="flex items-center gap-3 relative z-10">
-           <div className="bg-[#eab308]/20 p-2 rounded-lg text-[#eab308]">
-             <Star size={20} className="fill-[#eab308]/50" />
+      <div className="bg-[#181a20] border border-[#262933] rounded-xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden group">
+        <div className="flex items-center gap-4 relative z-10">
+           <div className="bg-[#eab308]/10 border border-[#eab308]/20 p-2.5 rounded-lg text-[#eab308]">
+             <Star size={24} className="fill-[#eab308]/40" />
            </div>
            <div>
-             <h3 className="text-[#eab308] font-bold text-sm drop-shadow-sm">O que você achou da nossa loja?</h3>
-             <p className="text-xs text-[#9ca3af]">Sua opinião é muito importante! Compartilhe sua experiência de compra.</p>
+             <h3 className="text-[#eab308] font-bold text-base drop-shadow-sm">O que você achou da nossa loja?</h3>
+             <p className="text-xs text-[#9ca3af] mt-0.5">Sua opinião é muito importante! Compartilhe sua experiência de compra.</p>
            </div>
         </div>
-        <Link href="/reviews" className="bg-[#eab308] hover:bg-[#ca8a04] text-black text-xs font-bold px-5 py-2.5 rounded-lg transition-all whitespace-nowrap shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:shadow-[0_0_20px_rgba(234,179,8,0.4)] relative z-10">
+        <Link href="/reviews" className="bg-[#eab308] hover:bg-[#ca8a04] text-black text-sm font-bold px-6 py-2.5 rounded-lg transition-colors shadow-md relative z-10 w-full sm:w-auto text-center shrink-0">
           Deixar Avaliação
         </Link>
       </div>

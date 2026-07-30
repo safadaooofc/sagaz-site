@@ -6,10 +6,10 @@ export default async function RechargePage() {
   const session = await auth();
   const user = session?.user?.id ? await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { referredById: true, referralRewardGiven: true, balance: true }
+    select: { referredById: true, balance: true }
   }) : null;
 
-  const isEligibleForReferralBonus = user?.referredById && !user?.referralRewardGiven;
+  const isEligibleForReferralBonus = !!user?.referredById;
 
   return (
     <div className="mx-auto py-8 font-sans relative">

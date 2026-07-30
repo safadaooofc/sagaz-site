@@ -40,13 +40,11 @@ export async function createCryptoPayment(amount: number, currency: string) {
   const session = await auth();
   if (!session?.user?.id) return { success: false, message: "Não autorizado" };
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { referredById: true, referralRewardGiven: true }
+    select: { referredById: true }
   });
 
-  const isEligibleForReferralBonus = user?.referredById && !user?.referralRewardGiven;
-  const { bonusAmount, totalAmount } = calculateBonus(amount, isEligibleForReferralBonus || false);
+  const isEligibleForReferralBonus = !!user?.referredById;
+  const { bonusAmount, totalAmount } = calculateBonus(amount, isEligibleForReferralBonus);
 
   const recharge = await prisma.recharge.create({
     data: {
@@ -70,25 +68,72 @@ export async function createPixPayment(amount: number) {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { referredById: true, referralRewardGiven: true }
+    select: { referredById: true, name: true, email: true }
   });
 
-  const isEligibleForReferralBonus = user?.referredById && !user?.referralRewardGiven;
-  const { bonusAmount, totalAmount } = calculateBonus(amount, isEligibleForReferralBonus || false);
+  const isEligibleForReferralBonus = !!user?.referredById;
+  const { bonusAmount, totalAmount } = calculateBonus(amount, isEligibleForReferralBonus);
 
-  const recharge = await prisma.recharge.create({
-    data: {
-      userId: session.user.id,
-      amount,
-      bonus: bonusAmount,
-      totalAmount,
-      method: "pix",
-      status: "pending",
-      pixCode: "00020126580014br.gov.bcb.pix0136" + Math.random().toString(36).substring(7) + "5204000053039865802BR5913Sagaz Pagamentos6009Sao Paulo62070503***6304"
+  try {
+    const apiUrl = process.env.CASHINPAY_API_URL || "https://api.cashinpay.com.br/v1";
+    const apiKey = process.env.CASHINPAY_API_KEY;
+
+    // Create pending recharge first so we can send its ID as reference
+    const recharge = await prisma.recharge.create({
+      data: {
+        userId: session.user.id,
+        amount,
+        bonus: bonusAmount,
+        totalAmount,
+        method: "pix",
+        status: "pending",
+        pixCode: "" // will update below
+      }
+    });
+
+    if (apiKey && apiKey !== "YOUR_API_KEY_HERE") {
+      const response = await fetch(`${apiUrl}/transactions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          value: amount, // Assuming value is in BRL or expected format
+          reference: recharge.id,
+          customer: {
+            name: user?.name || "Cliente Sagaz",
+            email: user?.email || "cliente@sagaz.com"
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro na API do CashinPay");
+      }
+
+      const data = await response.json();
+      const pixCode = data.qr_code || data.pix_code || data.payload || "";
+
+      await prisma.recharge.update({
+        where: { id: recharge.id },
+        data: { pixCode: pixCode }
+      });
+
+      return { success: true, recharge: { id: recharge.id, pixCode: pixCode, totalAmount: recharge.totalAmount, amount: recharge.amount, method: "pix" } };
+    } else {
+      // Fallback for development if keys aren't set
+      const fallbackPixCode = "00020126580014br.gov.bcb.pix0136" + Math.random().toString(36).substring(7) + "5204000053039865802BR5913Sagaz Pagamentos6009Sao Paulo62070503***6304";
+      await prisma.recharge.update({
+        where: { id: recharge.id },
+        data: { pixCode: fallbackPixCode }
+      });
+      return { success: true, recharge: { id: recharge.id, pixCode: fallbackPixCode, totalAmount: recharge.totalAmount, amount: recharge.amount, method: "pix" } };
     }
-  });
-
-  return { success: true, recharge: { id: recharge.id, pixCode: recharge.pixCode, totalAmount: recharge.totalAmount, amount: recharge.amount, method: "pix" } };
+  } catch (error) {
+    console.error("CashinPay Error:", error);
+    return { success: false, message: "Erro ao gerar PIX" };
+  }
 }
 
 export async function checkPaymentStatus(rechargeId: string) {
@@ -98,39 +143,6 @@ export async function checkPaymentStatus(rechargeId: string) {
   const recharge = await prisma.recharge.findUnique({ where: { id: rechargeId } });
   if (!recharge || recharge.userId !== session.user.id) return { success: false };
 
-  // Mock checking logic: we will just autocomplete it randomly for demonstration purposes,
-  // or after 5 seconds
-  const isTimePassed = (new Date().getTime() - recharge.createdAt.getTime()) > 5000;
-  
-  if (recharge.status === "pending" && isTimePassed) {
-    // approve payment
-    await prisma.$transaction(async (tx) => {
-      await tx.recharge.update({
-        where: { id: rechargeId },
-        data: { status: "completed" }
-      });
-      
-      await tx.user.update({
-        where: { id: recharge.userId },
-        data: { 
-          balance: { increment: recharge.totalAmount },
-          referralRewardGiven: true 
-        }
-      });
-      
-      await tx.balanceMovement.create({
-        data: {
-          userId: recharge.userId,
-          amount: recharge.totalAmount,
-          type: "RECHARGE",
-          description: `Recarga via ${recharge.method.toUpperCase()}`
-        }
-      });
-    });
-
-    revalidatePath("/dashboard");
-    return { success: true, data: { status: "completed" } };
-  }
-
+  // Status is now handled via webhook, we just return the current status from DB
   return { success: true, data: { status: recharge.status } };
 }
