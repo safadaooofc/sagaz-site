@@ -102,7 +102,7 @@ export function MobileMenu() {
         </div>
 
         <div className="p-4 border-t border-[#1f2229]">
-          <a href="#" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
+          <a href="https://discord.gg/seu-link-aqui" target="_blank" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
             <MessageSquare size={16} /> Entrar no Discord
           </a>
         </div>

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { User, Key, Shield, MessageSquare, CheckCircle2, AlertCircle, Copy, Check, Loader2 } from "lucide-react";
 import { changePassword, logoutOtherDevices, linkDiscord, sendDiscordVerificationCode, verifyDiscordCode, checkBooster } from "./actions";
 
+import { toast } from "sonner";
+
 export function SettingsClient({ user, stats }: any) {
   const [activeTab, setActiveTab] = useState("profile");
   
@@ -24,7 +26,7 @@ export function SettingsClient({ user, stats }: any) {
   
   const handleUpdatePassword = async () => {
     if (newPassword !== confirmPassword) {
-      alert("As senhas não coincidem.");
+      toast.error("As senhas não coincidem.");
       return;
     }
     setPasswordLoading(true);
@@ -36,12 +38,12 @@ export function SettingsClient({ user, stats }: any) {
     setPasswordLoading(false);
     
     if (res.success) {
-      alert("Senha atualizada com sucesso.");
+      toast.success("Senha atualizada com sucesso.");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } else {
-      alert(res.error || "Erro ao atualizar senha.");
+      toast.error(res.error || "Erro ao atualizar senha.");
     }
   };
 
@@ -52,9 +54,9 @@ export function SettingsClient({ user, stats }: any) {
     setIsVerifying(false);
     if (res.success) {
       setShowCodeInput(true);
-      alert("Código enviado para sua DM no Discord!");
+      toast.error("Código enviado para sua DM no Discord!");
     } else {
-      alert(res.error || "Erro ao enviar código. Seu ID está correto e DMs estão abertas?");
+      toast.error(res.error || "Erro ao enviar código. Seu ID está correto e DMs estão abertas?");
     }
   };
 
@@ -64,10 +66,10 @@ export function SettingsClient({ user, stats }: any) {
     const res = await verifyDiscordCode(discordId, verificationCode);
     setIsVerifying(false);
     if (res.success) {
-      alert("Discord verificado com sucesso!");
+      toast.success("Discord verificado com sucesso!");
       window.location.reload();
     } else {
-      alert(res.error || "Código inválido.");
+      toast.error(res.error || "Código inválido.");
     }
   };
 
@@ -76,10 +78,10 @@ export function SettingsClient({ user, stats }: any) {
     const res = await checkBooster();
     setIsVerifying(false);
     if (res.success) {
-      alert("Status Booster verificado e atualizado!");
+      toast.success("Status Booster verificado e atualizado!");
       window.location.reload();
     } else {
-      alert(res.error || "Você não é Booster do servidor.");
+      toast.error(res.error || "Você não é Booster do servidor.");
     }
   };
 
@@ -167,7 +169,7 @@ export function SettingsClient({ user, stats }: any) {
                     <p className="font-bold text-white text-sm">Este dispositivo</p>
                     <p className="text-xs text-green-500 mt-1 flex items-center gap-1"><CheckCircle2 size={12} /> Ativo agora</p>
                   </div>
-                  <button onClick={async () => { await logoutOtherDevices(); alert("Outros dispositivos desconectados."); }} className="text-xs font-bold text-red-500 hover:text-red-400 bg-red-500/10 px-3 py-1.5 rounded-md transition-colors">
+                  <button onClick={async () => { await logoutOtherDevices(); toast.success("Outros dispositivos desconectados."); }} className="text-xs font-bold text-red-500 hover:text-red-400 bg-red-500/10 px-3 py-1.5 rounded-md transition-colors">
                     Desconectar Outros
                   </button>
                 </div>

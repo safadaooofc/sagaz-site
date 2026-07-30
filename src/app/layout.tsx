@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   }
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,7 +27,10 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${inter.variable} h-full antialiased dark`}
     >
-      <body suppressHydrationWarning className="min-h-full flex flex-col bg-background text-foreground">{children}</body>
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-background text-foreground">
+        <Toaster theme="dark" position="top-right" richColors />
+        {children}
+      </body>
     </html>
   );
 }

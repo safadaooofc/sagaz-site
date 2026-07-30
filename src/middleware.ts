@@ -34,7 +34,7 @@ export default auth((req) => {
   }
 
   // Se tentar acessar o painel admin sem ser ADMIN ou MODERATOR, volta pro dashboard
-  if (isAdminRoute && userRole !== "ADMIN" && userRole !== "SUPERADMIN" && userRole !== "MODERATOR") {
+  if (isAdminRoute && userRole !== "ADMIN" && userRole !== "SUPERADMIN" && userRole !== "MODERATOR" && userRole !== "OWNER") {
     const dashboardUrl = new URL("/dashboard", req.nextUrl.origin);
     return Response.redirect(dashboardUrl);
   }

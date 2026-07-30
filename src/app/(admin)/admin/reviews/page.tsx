@@ -27,7 +27,7 @@ export default async function AdminReviewsPage() {
               <tr key={review.id} className="border-b border-[#262933] hover:bg-[#1f2229]/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="text-white font-bold">{review.user.name}</div>
-                  <div className="text-xs text-[#6b7280]">Produto: {review.product.name}</div>
+                  <div className="text-xs text-[#6b7280]">Produto: {review.product?.name || "Geral"}</div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-1 text-yellow-500">

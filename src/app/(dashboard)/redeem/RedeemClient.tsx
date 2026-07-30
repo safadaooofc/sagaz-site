@@ -3,6 +3,8 @@
 import { Gift, RefreshCw } from "lucide-react";
 import { useState } from "react";
 
+import { toast } from "sonner";
+
 export function RedeemClient() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,7 +16,7 @@ export function RedeemClient() {
     // TODO: Implement actual redeem logic
     setTimeout(() => {
       setLoading(false);
-      alert("Sistema de resgate em desenvolvimento.");
+      toast.error("Sistema de resgate em desenvolvimento.");
     }, 1000);
   };
 

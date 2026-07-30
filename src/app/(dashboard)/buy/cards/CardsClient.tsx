@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { getAvailableCards, buyCard } from "./actions";
 
+import { toast } from "sonner";
+
 function normalizeBrandKey(e: string) {
   return (e || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
 }
@@ -155,7 +157,7 @@ export default function BuyCardsClient() {
     const res = await buyCard(card.cardId, 1, undefined, card.id);
     
     if (!res.success) {
-      alert((res as any).message || "Tente novamente.");
+      toast.error((res as any).message || "Tente novamente.");
       setPurchasingId(null);
       setConfirmOpen(false);
       setSelectedCard(null);

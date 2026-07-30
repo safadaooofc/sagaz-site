@@ -5,6 +5,8 @@ import { DollarSign, CheckCircle2, Gift, Search, Plus, Minus, ShieldCheck, Loade
 import QRCode from "qrcode";
 import { getAvailableCryptos, createCryptoPayment, createPixPayment, checkPaymentStatus, getUserBalance } from "./actions";
 
+import { toast } from "sonner";
+
 function CryptoPaymentModal({ isOpen, onClose, amount, onSuccess }: any) {
   const [cryptos, setCryptos] = useState<any[]>([]);
   const [selectedCrypto, setSelectedCrypto] = useState<any>(null);
@@ -19,7 +21,7 @@ function CryptoPaymentModal({ isOpen, onClose, amount, onSuccess }: any) {
       setCryptos(data);
     } catch (e) {
       console.error(e);
-      alert("Erro ao carregar moedas");
+      toast.error("Erro ao carregar moedas");
     } finally {
       setLoading(false);
     }
@@ -45,22 +47,22 @@ function CryptoPaymentModal({ isOpen, onClose, amount, onSuccess }: any) {
 
   const handleCreatePayment = async () => {
     if (!selectedCrypto) {
-      alert("Selecione uma moeda.");
+      toast.error("Selecione uma moeda.");
       return;
     }
     setCreating(true);
     try {
       const res = await createCryptoPayment(amount, selectedCrypto.code);
       if (res.success && res.recharge) {
-        alert("Pagamento criado com sucesso!");
+        toast.success("Pagamento criado com sucesso!");
         onSuccess(res.recharge);
         onClose();
       } else {
-        alert(res.message || "Erro ao criar pagamento");
+        toast.error(res.message || "Erro ao criar pagamento");
       }
     } catch (e) {
       console.error(e);
-      alert("Erro ao criar pagamento");
+      toast.error("Erro ao criar pagamento");
     } finally {
       setCreating(false);
     }
@@ -336,7 +338,7 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
   const handleSelectPaymentMethod = (method: string) => {
     const min = method === "crypto" ? 70 : 1;
     if (activeAmount < min) {
-      alert(`O valor mínimo para recarga via ${method === 'crypto' ? 'Criptomoedas' : 'PIX'} é ${formatCurrency(min)}`);
+      toast.error(`O valor mínimo para recarga via ${method === 'crypto' ? 'Criptomoedas' : 'PIX'} é ${formatCurrency(min)}`);
       setStep(1);
       return;
     }
@@ -357,11 +359,11 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
         setCurrentRecharge(res.recharge);
         setShowPaymentModal(true);
       } else {
-        alert(res.message || "Erro na recarga");
+        toast.error(res.message || "Erro na recarga");
       }
     } catch (e) {
       console.error(e);
-      alert("Erro na recarga");
+      toast.error("Erro na recarga");
     } finally {
       setGenerating(false);
     }
@@ -383,9 +385,9 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
           }
           const b = await getUserBalance();
           setBalance(b.balance);
-          alert(`Pagamento aprovado! Seu saldo foi creditado com ${formatCurrency(currentRecharge.totalAmount)}`);
+          toast.error(`Pagamento aprovado! Seu saldo foi creditado com ${formatCurrency(currentRecharge.totalAmount)}`);
         } else if (res.data.status === "failed") {
-          alert("Pagamento falhou.");
+          toast.error("Pagamento falhou.");
           if (paymentCheckInterval.current) {
             clearInterval(paymentCheckInterval.current);
             paymentCheckInterval.current = null;
@@ -601,7 +603,7 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
             </div>
 
             <button 
-              onClick={() => { if (activeAmount >= 1) setStep(2); else alert("Valor mínimo é R$ 1,00"); }}
+              onClick={() => { if (activeAmount >= 1) setStep(2); else toast.error("Valor mínimo é R$ 1,00"); }}
               disabled={activeAmount < 1}
               className="w-full bg-[#eab308] hover:bg-[#ca8a04] text-black font-bold py-4 rounded-xl disabled:opacity-50 transition-colors"
             >
@@ -741,7 +743,7 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
                 <button 
                   onClick={() => {
                     navigator.clipboard.writeText(currentRecharge.pixCode);
-                    alert("Código copiado!");
+                    toast.success("Código copiado!");
                   }}
                   className="bg-[#262933] hover:bg-[#333845] text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >

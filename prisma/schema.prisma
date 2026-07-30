@@ -169,13 +169,13 @@ model SystemConfig {
 model Review {
   id        String   @id @default(cuid())
   userId    String
-  productId String
+  productId String?
   rating    Int
   comment   String?  @db.Text
   createdAt DateTime @default(now())
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model DeviceSession {

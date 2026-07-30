@@ -10,8 +10,8 @@ export function Sidebar() {
   const getLinkClass = (path: string) => {
     const isActive = pathname === path;
     return isActive
-      ? "flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#eab308] text-[#0f1115] font-bold text-sm"
-      : "flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9ca3af] hover:text-white hover:bg-[#181a20] transition-colors font-medium text-sm";
+      ? "flex items-center gap-3 px-3 py-2 rounded-lg bg-[#eab308] text-[#0f1115] font-bold text-sm"
+      : "flex items-center gap-3 px-3 py-2 rounded-lg text-[#9ca3af] hover:text-white hover:bg-[#181a20] transition-colors font-medium text-sm";
   };
 
   return (
@@ -21,7 +21,7 @@ export function Sidebar() {
         <span className="font-black text-xl text-white tracking-tight leading-tight">KNIGHT<br/><span className="text-[11px] text-[#9ca3af] font-normal tracking-normal">Cartões Digitais</span></span>
       </div>
 
-      <div className="flex-1 overflow-y-auto hide-scrollbar px-4 py-2 space-y-6">
+      <div className="flex-1 overflow-y-auto hide-scrollbar px-4 py-2 space-y-4">
         <div>
           <h3 className="text-[10px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest px-2">Plataforma</h3>
           <nav className="space-y-1">
@@ -82,7 +82,7 @@ export function Sidebar() {
       </div>
 
       <div className="p-4 space-y-3">
-        <a href="#" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
+        <a href="https://discord.gg/seu-link-aqui" target="_blank" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
           <MessageSquare size={16} /> Entrar no Discord
         </a>
         <div className="flex items-center gap-3 mt-4 pt-4">

@@ -174,17 +174,15 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-[1200px] mx-auto h-full flex flex-col font-sans px-4 sm:px-0 pt-4 pb-6">
       
-      <div className="bg-[#181a20] border border-[#262933] rounded-xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden group">
-        <div className="flex items-center gap-4 relative z-10">
-           <div className="bg-[#eab308]/10 border border-[#eab308]/20 p-2.5 rounded-lg text-[#eab308]">
-             <Star size={24} className="fill-[#eab308]/40" />
-           </div>
-           <div>
-             <h3 className="text-[#eab308] font-bold text-base drop-shadow-sm">O que você achou da nossa loja?</h3>
-             <p className="text-xs text-[#9ca3af] mt-0.5">Sua opinião é muito importante! Compartilhe sua experiência de compra.</p>
+      <div className="bg-[#181a20] border border-[#262933] rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+           <Star size={24} className="text-[#eab308] fill-[#eab308] shrink-0" />
+           <div className="flex-1">
+             <h3 className="text-[#eab308] font-bold text-[15px]">O que você achou da nossa loja?</h3>
+             <p className="text-xs text-[#9ca3af]">Sua opinião é muito importante! Compartilhe sua experiência de compra.</p>
            </div>
         </div>
-        <Link href="/reviews" className="bg-[#eab308] hover:bg-[#ca8a04] text-black text-sm font-bold px-6 py-2.5 rounded-lg transition-colors shadow-md relative z-10 w-full sm:w-auto text-center shrink-0">
+        <Link href="/reviews" className="bg-[#eab308] hover:bg-[#ca8a04] text-black text-[13px] font-bold px-4 py-2 rounded-lg transition-colors shrink-0 w-full sm:w-auto text-center">
           Deixar Avaliação
         </Link>
       </div>

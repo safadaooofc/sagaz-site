@@ -5,6 +5,8 @@ import { Gift, ShieldCheck, Diamond, MessageSquare, ShieldAlert, Clock, Lock, Co
 import Link from "next/link";
 import { claimDrop } from "./actions";
 
+import { toast } from "sonner";
+
 export function DropsClient({ events, hasDiscord }: any) {
   const [claimingId, setClaimingId] = useState<string | null>(null);
   const [passwordInput, setPasswordInput] = useState("");
@@ -52,7 +54,7 @@ export function DropsClient({ events, hasDiscord }: any) {
       setCardsResult(res.cards || []);
       setSelectedEvent(ev); // to show results
     } else {
-      alert(res.error || "Erro ao resgatar.");
+      toast.error(res.error || "Erro ao resgatar.");
     }
   };
 

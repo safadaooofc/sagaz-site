@@ -76,22 +76,24 @@ export async function createPixPayment(amount: number) {
   const isEligibleForReferralBonus = !!user?.referredById;
   const { bonusAmount, totalAmount } = calculateBonus(amount, isEligibleForReferralBonus);
 
+  // Create pending recharge first so we can send its ID as reference
+  const recharge = await prisma.recharge.create({
+    data: {
+      userId: session.user.id,
+      amount,
+      bonus: bonusAmount,
+      totalAmount,
+      method: "pix",
+      status: "pending",
+      pixCode: "" // will update below
+    }
+  });
+
+  const fallbackPixCode = "00020126580014br.gov.bcb.pix0136" + Math.random().toString(36).substring(7) + "5204000053039865802BR5913Sagaz Pagamentos6009Sao Paulo62070503***6304";
+
   try {
     const apiUrl = process.env.CASHINPAY_API_URL || "https://api.cashinpay.com.br/v1";
     const apiKey = process.env.CASHINPAY_API_KEY;
-
-    // Create pending recharge first so we can send its ID as reference
-    const recharge = await prisma.recharge.create({
-      data: {
-        userId: session.user.id,
-        amount,
-        bonus: bonusAmount,
-        totalAmount,
-        method: "pix",
-        status: "pending",
-        pixCode: "" // will update below
-      }
-    });
 
     if (apiKey && apiKey !== "YOUR_API_KEY_HERE") {
       const response = await fetch(`${apiUrl}/transactions`, {
@@ -101,7 +103,7 @@ export async function createPixPayment(amount: number) {
           "Authorization": `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          value: amount, // Assuming value is in BRL or expected format
+          value: amount,
           reference: recharge.id,
           customer: {
             name: user?.name || "Cliente Sagaz",
@@ -111,7 +113,9 @@ export async function createPixPayment(amount: number) {
       });
 
       if (!response.ok) {
-        throw new Error("Erro na API do CashinPay");
+        const errorText = await response.text();
+        console.error("CashinPay Response Error:", response.status, errorText);
+        throw new Error(`Erro na API do CashinPay: ${errorText}`);
       }
 
       const data = await response.json();
@@ -125,7 +129,6 @@ export async function createPixPayment(amount: number) {
       return { success: true, recharge: { id: recharge.id, pixCode: pixCode, totalAmount: recharge.totalAmount, amount: recharge.amount, method: "pix" } };
     } else {
       // Fallback for development if keys aren't set
-      const fallbackPixCode = "00020126580014br.gov.bcb.pix0136" + Math.random().toString(36).substring(7) + "5204000053039865802BR5913Sagaz Pagamentos6009Sao Paulo62070503***6304";
       await prisma.recharge.update({
         where: { id: recharge.id },
         data: { pixCode: fallbackPixCode }
@@ -134,7 +137,7 @@ export async function createPixPayment(amount: number) {
     }
   } catch (error) {
     console.error("CashinPay Error:", error);
-    return { success: false, message: "Erro ao gerar PIX" };
+    return { success: false, message: "Erro de comunicação com a API da CashinPay." };
   }
 }
 
