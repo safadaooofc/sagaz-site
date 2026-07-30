@@ -290,7 +290,7 @@ export function DashboardDataTable({ transactions }: { transactions: Transaction
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {isMobile ? (
           <div className="flex flex-col">
             {paginatedData.length === 0 ? (

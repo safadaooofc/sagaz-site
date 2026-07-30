@@ -61,7 +61,7 @@ export async function createCryptoPayment(amount: number, currency: string) {
     }
   });
 
-  return { success: true, recharge: { _id: recharge.id, pixCode: recharge.pixCode, totalAmount: recharge.totalAmount } };
+  return { success: true, recharge: { id: recharge.id, pixCode: recharge.pixCode, totalAmount: recharge.totalAmount, amount: recharge.amount, method: "crypto" } };
 }
 
 export async function createPixPayment(amount: number) {
@@ -88,7 +88,7 @@ export async function createPixPayment(amount: number) {
     }
   });
 
-  return { success: true, recharge: { _id: recharge.id, pixCode: recharge.pixCode, totalAmount: recharge.totalAmount } };
+  return { success: true, recharge: { id: recharge.id, pixCode: recharge.pixCode, totalAmount: recharge.totalAmount, amount: recharge.amount, method: "pix" } };
 }
 
 export async function checkPaymentStatus(rechargeId: string) {

@@ -103,7 +103,7 @@ export default function BuyCardsClient() {
   
   const verificationTimer = useRef<number | null>(null);
 
-  const resetVerificationState = () => {
+  function resetVerificationState() {
     if (verificationTimer.current) {
       window.clearTimeout(verificationTimer.current);
       verificationTimer.current = null;
@@ -206,9 +206,9 @@ export default function BuyCardsClient() {
             <p className="text-sm font-medium text-white">Saldo disponível</p>
             <span className="text-[#9ca3af] font-black">$</span>
           </div>
-          <p className="font-display text-2xl font-bold text-white">
+          <div className="font-display text-2xl font-bold text-white">
             {loading ? <div className="h-8 w-28 bg-[#1f2229] animate-pulse rounded-md"></div> : formatCurrency(balance)}
-          </p>
+          </div>
           <p className="text-xs text-[#9ca3af]">Atualizado em tempo real após cada compra</p>
         </div>
 
@@ -217,9 +217,9 @@ export default function BuyCardsClient() {
             <p className="text-sm font-medium text-white">Cartões disponíveis</p>
             <ShoppingCart size={16} className="text-[#9ca3af]" />
           </div>
-          <p className="font-display text-2xl font-bold text-white">
+          <div className="font-display text-2xl font-bold text-white">
             {loading ? <div className="h-8 w-16 bg-[#1f2229] animate-pulse rounded-md"></div> : cards.length}
-          </p>
+          </div>
           <p className="text-xs text-[#9ca3af]">Reservamos cada cartão exclusivamente para você</p>
         </div>
 

@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { MobileMenu } from "./MobileMenu";
 import { NotificationsMenu } from "./NotificationsMenu";
+import { UserMenu } from "./UserMenu";
 
 export async function Topbar() {
   const session = await auth();
@@ -37,15 +38,7 @@ export async function Topbar() {
       <div className="flex items-center gap-4">
         <NotificationsMenu initialNotifications={notifications} unreadCount={unreadCount} />
         
-        <div className="w-8 h-8 rounded-full bg-[#181a20] border border-[#262933] flex items-center justify-center overflow-hidden">
-          {session?.user?.image ? (
-            <img src={session.user.image} alt="Avatar" className="w-full h-full object-cover" />
-          ) : (
-            <span className="font-bold text-white text-sm">
-              {session?.user?.name?.charAt(0).toUpperCase() || "U"}
-            </span>
-          )}
-        </div>
+        <UserMenu user={session?.user as any} />
       </div>
     </header>
   );

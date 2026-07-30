@@ -12,13 +12,7 @@ function CryptoPaymentModal({ isOpen, onClose, amount, onSuccess }: any) {
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
 
-  useEffect(() => {
-    if (isOpen && cryptos.length === 0) {
-      loadCurrencies();
-    }
-  }, [isOpen, cryptos.length]);
-
-  const loadCurrencies = async () => {
+  async function loadCurrencies() {
     setLoading(true);
     try {
       const data = await getAvailableCryptos();
@@ -30,6 +24,12 @@ function CryptoPaymentModal({ isOpen, onClose, amount, onSuccess }: any) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isOpen && cryptos.length === 0) {
+      loadCurrencies();
+    }
+  }, [isOpen, cryptos.length]);
 
   const filteredCryptos = useMemo(() => {
     if (!search) return cryptos;
@@ -252,6 +252,12 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
     };
   }, []);
 
+  function startPaymentCheck() {
+    if (paymentCheckInterval.current) return;
+    checkPaymentStatusInterval();
+    paymentCheckInterval.current = window.setInterval(checkPaymentStatusInterval, 3000);
+  }
+
   useEffect(() => {
     if (showPaymentModal && currentRecharge?._id && !paymentCheckInterval.current) {
       startPaymentCheck();
@@ -328,7 +334,7 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
   };
 
   const handleSelectPaymentMethod = (method: string) => {
-    const min = method === "crypto" ? 70 : 10;
+    const min = method === "crypto" ? 70 : 1;
     if (activeAmount < min) {
       alert(`O valor mínimo para recarga via ${method === 'crypto' ? 'Criptomoedas' : 'PIX'} é ${formatCurrency(min)}`);
       setStep(1);
@@ -393,11 +399,7 @@ export function RechargeClient({ balance: initialBalance, isEligibleForReferralB
     }
   };
 
-  const startPaymentCheck = () => {
-    if (paymentCheckInterval.current) return;
-    checkPaymentStatusInterval();
-    paymentCheckInterval.current = window.setInterval(checkPaymentStatusInterval, 3000);
-  };
+
 
   const currentValRaw = presetAmount || (customAmountStr ? parseFloat(customAmountStr.replace(",", ".")) : 0) || getSliderAmount();
   

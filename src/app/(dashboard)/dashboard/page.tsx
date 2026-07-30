@@ -1,6 +1,10 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { DashboardDataTable, TransactionData } from "@/components/dashboard/DashboardDataTable";
+import { MessageSquare, ShoppingCart, Star } from "lucide-react";
+import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 function SectionCards({
   balance = 0,
@@ -40,17 +44,17 @@ function SectionCards({
   ];
 
   return (
-    <div className="grid h-full min-h-0 w-full grid-cols-1 gap-4 sm:auto-rows-fr sm:grid-cols-2 sm:grid-rows-2 mb-6">
+    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:grid-rows-2 flex-1 min-h-[300px]">
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="bg-[#181a20]/80 backdrop-blur-md border border-[#1f2229] rounded-xl flex min-h-0 min-w-[180px] flex-col justify-center space-y-1 p-5 sm:h-full sm:min-h-[88px]"
+          className="bg-[#181a20]/80 backdrop-blur-md border border-[#1f2229] rounded-xl flex flex-col justify-center space-y-2 p-8 h-full"
         >
-          <p className="text-[11px] font-medium uppercase tracking-wider text-[#9ca3af]">
+          <p className="text-xs font-medium uppercase tracking-wider text-[#9ca3af]">
             {stat.label}
           </p>
-          <p className="font-display text-2xl font-bold text-white">{stat.value}</p>
-          <p className="text-xs text-[#9ca3af]">{stat.description}</p>
+          <p className="font-display text-4xl font-bold text-white">{stat.value}</p>
+          <p className="text-sm text-[#9ca3af]">{stat.description}</p>
         </div>
       ))}
     </div>
@@ -65,13 +69,29 @@ export default async function DashboardPage() {
   let totalPurchases = 0;
   let totalSpent = 0;
   let averageValue = 0;
+  let discordId: string | null = null;
+  let latestSales: { productName: string; time: Date }[] = [];
 
   if (session?.user?.id) {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { balance: true },
+      select: { balance: true, discordId: true },
     });
     balance = user?.balance || 0;
+    discordId = user?.discordId || null;
+
+    // Fetch latest global sales (max 5) for social proof
+    const globalLatest = await prisma.transaction.findMany({
+      where: { status: { in: ["completed", "COMPLETED"] } },
+      orderBy: { date: "desc" },
+      take: 5,
+      include: { product: { select: { name: true } } }
+    });
+    
+    latestSales = globalLatest.map(tx => ({
+      productName: tx.product?.name || "Produto",
+      time: tx.date,
+    }));
 
     const txs = await prisma.transaction.findMany({
       where: { userId: session.user.id },
@@ -133,17 +153,87 @@ export default async function DashboardPage() {
         loginData: type === "login" ? parsedLogin : undefined,
       };
     });
+
+    if (!discordId) {
+      const existingNotif = await prisma.notification.findFirst({
+        where: { userId: session.user.id, title: "Vincule seu Discord!" }
+      });
+      if (!existingNotif) {
+        await prisma.notification.create({
+          data: {
+            userId: session.user.id,
+            title: "Vincule seu Discord!",
+            message: "Conecte sua conta do Discord na aba Configurações para resgatar compras e usar os Drops.",
+            type: "info"
+          }
+        });
+      }
+    }
   }
 
   return (
-    <div className="max-w-[1200px] mx-auto h-full flex flex-col font-sans px-4 sm:px-0 pt-4">
-      <SectionCards
-        balance={balance}
-        totalPurchases={totalPurchases}
-        totalSpent={totalSpent}
-        averageValue={averageValue}
-      />
-      <div className="flex-1 mt-2">
+    <div className="max-w-[1200px] mx-auto h-full flex flex-col font-sans px-4 sm:px-0 pt-4 pb-6">
+      
+      <div className="bg-gradient-to-r from-[#eab308]/10 to-transparent border border-[#eab308]/20 rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden group">
+        <div className="absolute inset-0 bg-[#eab308]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div className="flex items-center gap-3 relative z-10">
+           <div className="bg-[#eab308]/20 p-2 rounded-lg text-[#eab308]">
+             <Star size={20} className="fill-[#eab308]/50" />
+           </div>
+           <div>
+             <h3 className="text-[#eab308] font-bold text-sm drop-shadow-sm">O que você achou da nossa loja?</h3>
+             <p className="text-xs text-[#9ca3af]">Sua opinião é muito importante! Compartilhe sua experiência de compra.</p>
+           </div>
+        </div>
+        <Link href="/reviews" className="bg-[#eab308] hover:bg-[#ca8a04] text-black text-xs font-bold px-5 py-2.5 rounded-lg transition-all whitespace-nowrap shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:shadow-[0_0_20px_rgba(234,179,8,0.4)] relative z-10">
+          Deixar Avaliação
+        </Link>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6 mb-8 min-h-[300px]">
+        <SectionCards
+          balance={balance}
+          totalPurchases={totalPurchases}
+          totalSpent={totalSpent}
+          averageValue={averageValue}
+        />
+        
+        <div className="w-full lg:w-[350px] bg-[#181a20]/80 backdrop-blur-md border border-[#1f2229] rounded-xl flex flex-col overflow-hidden">
+          <div className="p-5 border-b border-[#1f2229] flex justify-between items-center bg-[#14161b]">
+            <h3 className="font-bold text-sm text-white flex items-center gap-2">
+              Últimas Vendas
+            </h3>
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+          </div>
+          <div className="p-4 flex-1 overflow-y-auto space-y-3 custom-scrollbar">
+            {latestSales.length > 0 ? latestSales.map((sale, i) => (
+              <div key={i} className="flex items-start gap-3 bg-[#0f1115] p-3.5 rounded-lg border border-[#1f2229]">
+                <div className="mt-0.5 bg-green-500/10 p-2 rounded-lg border border-green-500/20">
+                  <ShoppingCart size={14} className="text-green-500" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-[#9ca3af]">Um usuário comprou</p>
+                  <p className="text-sm font-bold text-white leading-tight mt-0.5">{sale.productName}</p>
+                  <p className="text-[10px] text-[#4b5563] mt-1.5 font-medium">
+                    {formatDistanceToNow(new Date(sale.time), { addSuffix: true, locale: ptBR })}
+                  </p>
+                </div>
+              </div>
+            )) : (
+              <div className="text-center text-xs text-[#4b5563] mt-10">Nenhuma venda recente</div>
+            )}
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="font-bold text-white text-lg">Minhas Compras</h3>
+      </div>
+
+      <div className="flex-1 min-h-[400px]">
         <DashboardDataTable transactions={formattedTxs} />
       </div>
     </div>
