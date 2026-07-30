@@ -18,10 +18,22 @@ model User {
   balance       Float           @default(0.0)
   role          String          @default("USER")
   resellerDiscount Float        @default(0.0)
+  referralCode  String?         @unique
+  referredById  String?
+  referralDiscount Float        @default(0.0)
+  referralRewardGiven Boolean   @default(false)
+  tokenVersion  Int             @default(1)
+  
   accounts      Account[]
   sessions      Session[]
+  deviceSessions DeviceSession[]
   transactions  Transaction[]
+  balanceLogs   BalanceMovement[]
   reviews       Review[]
+  
+  referredBy    User?           @relation("Referrals", fields: [referredById], references: [id])
+  referredUsers User[]          @relation("Referrals")
+
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 }
@@ -163,12 +175,36 @@ model Review {
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
+model DeviceSession {
+  id           String   @id @default(cuid())
+  userId       String
+  ip           String
+  browser      String
+  os           String
+  tokenVersion Int
+  lastSeen     DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model SecurityLog {
   id        String   @id @default(cuid())
   ip        String
   event     String
   details   String?  @db.Text
   createdAt DateTime @default(now())
+}
+
+model BalanceMovement {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Float
+  type        String
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model GiftCode {

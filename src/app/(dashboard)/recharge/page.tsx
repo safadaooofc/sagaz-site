@@ -1,8 +1,21 @@
-import { DollarSign, CheckCircle2 } from "lucide-react";
+import { DollarSign, CheckCircle2, Gift } from "lucide-react";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { ReferralModal } from "./ReferralModal";
 
-export default function RechargePage() {
+export default async function RechargePage() {
+  const session = await auth();
+  const user = session?.user?.id ? await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { referredById: true, referralRewardGiven: true }
+  }) : null;
+
+  const isEligibleForReferralBonus = user?.referredById && !user?.referralRewardGiven;
+
   return (
-    <div className="max-w-[800px] mx-auto py-8 font-sans">
+    <div className="max-w-[800px] mx-auto py-8 font-sans relative">
+      {isEligibleForReferralBonus && <ReferralModal />}
+      
       <div className="text-center mb-10">
         <h1 className="text-2xl font-bold text-white flex items-center justify-center gap-2 mb-2">
           <span className="text-[#eab308] font-black">$</span> Recarregar Saldo
@@ -26,6 +39,20 @@ export default function RechargePage() {
           </div>
         </div>
       </div>
+
+      {isEligibleForReferralBonus && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-6 mb-8 flex items-start gap-4">
+          <div className="bg-yellow-500/20 text-yellow-500 p-3 rounded-full shrink-0">
+            <Gift size={24} />
+          </div>
+          <div>
+            <h3 className="text-yellow-500 font-bold text-lg mb-1">🎁 Bônus de Indicação Ativo</h3>
+            <p className="text-yellow-500/80 text-sm leading-relaxed">
+              Complete sua primeira recarga de <strong>R$ 10,00 ou mais</strong> para desbloquear <strong>5% de Desconto Vitalício</strong> na loja automaticamente!
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <div className="bg-[#181a20] border border-[#262933] rounded-lg p-5 flex justify-between items-start">

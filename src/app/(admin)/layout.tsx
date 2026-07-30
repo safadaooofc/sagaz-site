@@ -52,7 +52,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
           {role === "SUPERADMIN" && (
             <>
-              <div className="text-[11px] font-bold text-[#4b5563] uppercase tracking-wider mb-2 mt-8 px-3">Segurança</div>
+              <div className="text-[11px] font-bold text-[#4b5563] uppercase tracking-wider mb-2 mt-8 px-3">Financeiro & Segurança</div>
+              <Link href="/admin/finance" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#9ca3af] hover:text-white hover:bg-[#1f2229] transition-all">
+                <DollarSign size={18} /> Extrato e Logs
+              </Link>
               <Link href="/admin/security" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-all">
                 <ShieldAlert size={18} /> Monitoramento de IP
               </Link>

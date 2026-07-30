@@ -72,29 +72,46 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
+        token.id = user.id;
         token.role = (user as any).role || "USER";
+        token.tokenVersion = (user as any).tokenVersion || 1;
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
+        session.user.id = token.id as string;
         (session.user as any).role = token.role;
+        (session.user as any).tokenVersion = token.tokenVersion;
       }
       return session;
     },
     async signIn({ user, account, profile }) {
+      // Sincroniza a foto do Discord no banco de dados
+      if (account?.provider === "discord" && user?.id && user?.image) {
+        try {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { image: user.image }
+          });
+        } catch (e) {
+          console.error("Falha ao sincronizar avatar:", e);
+        }
+      }
+
       // Auto-join Discord Server via Bot Token
       if (account?.provider === "discord" && account.access_token) {
         try {
-          const guildId = process.env.DISCORD_GUILD_ID;
-          const botToken = process.env.DISCORD_BOT_TOKEN;
-          if (guildId && botToken && profile?.id) {
-            await fetch(`https://discord.com/api/v10/guilds/${guildId}/members/${profile.id}`, {
+          const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
+          const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
+
+          if (DISCORD_GUILD_ID && DISCORD_BOT_TOKEN && profile?.id) {
+            await fetch(`https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/members/${profile.id}`, {
               method: 'PUT',
               headers: {
-                Authorization: `Bot ${botToken}`,
+                'Authorization': `Bot ${DISCORD_BOT_TOKEN}`,
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
@@ -103,7 +120,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             });
           }
         } catch (error) {
-          console.error("Failed to add user to Discord guild", error);
+          console.error("Erro ao adicionar usuário no Discord:", error);
         }
       }
       return true;
