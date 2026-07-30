@@ -1,4 +1,5 @@
 import { Gift, ShieldCheck, Diamond, MessageSquare, ShieldAlert } from "lucide-react";
+import Link from "next/link";
 
 export default function DropsPage() {
   return (
@@ -53,12 +54,12 @@ export default function DropsPage() {
             <span className="text-[13px] font-bold text-white">Para garantir que você não perca nenhum drop:</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button className="bg-[#181a20] hover:bg-[#1f2229] border border-[#262933] text-white py-3 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2">
+            <a href="https://discord.gg/seu-link-aqui" target="_blank" rel="noopener noreferrer" className="bg-[#181a20] hover:bg-[#1f2229] border border-[#262933] text-white py-3 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2">
               <MessageSquare size={16} /> Entrar no Discord
-            </button>
-            <button className="bg-[#181a20] hover:bg-[#1f2229] border border-[#262933] text-white py-3 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2">
+            </a>
+            <Link href="/settings" className="bg-[#181a20] hover:bg-[#1f2229] border border-[#262933] text-white py-3 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2">
               <ShieldCheck size={16} /> Verificar Conta
-            </button>
+            </Link>
           </div>
         </div>
       </div>

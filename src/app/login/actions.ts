@@ -9,7 +9,8 @@ import { headers } from "next/headers";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendPasswordResetOtp(email: string) {
-  const ip = headers().get("x-forwarded-for") || "127.0.0.1";
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for") || "127.0.0.1";
   const rl = await checkRateLimit(`reset_${ip}`, 3, 60000);
   
   if (!rl.success) {

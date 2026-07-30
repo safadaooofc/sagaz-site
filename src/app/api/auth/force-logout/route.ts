@@ -4,10 +4,11 @@ import { redirect } from "next/navigation";
 export async function GET() {
   // Clear the NextAuth JWT cookies
   // NextAuth default cookie names
-  cookies().delete("authjs.session-token");
-  cookies().delete("__Secure-authjs.session-token");
-  cookies().delete("next-auth.session-token");
-  cookies().delete("__Secure-next-auth.session-token");
+  const cookieStore = await cookies();
+  cookieStore.delete("authjs.session-token");
+  cookieStore.delete("__Secure-authjs.session-token");
+  cookieStore.delete("next-auth.session-token");
+  cookieStore.delete("__Secure-next-auth.session-token");
   
   return redirect("/login");
 }

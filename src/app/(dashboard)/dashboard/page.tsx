@@ -3,8 +3,30 @@ import { StatsGrid } from "@/components/StatsGrid";
 import { Feed } from "@/components/Feed";
 import { HistoryTable } from "@/components/HistoryTable";
 import { Star } from "lucide-react";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth();
+  
+  let formattedTxs: any[] = [];
+  if (session?.user?.id) {
+    const txs = await prisma.transaction.findMany({
+      where: { userId: session.user.id },
+      orderBy: { date: "desc" },
+      include: { product: { select: { name: true } } }
+    });
+    
+    formattedTxs = txs.map(tx => ({
+      id: tx.id,
+      productName: tx.product?.name || "Produto Removido",
+      quantity: tx.quantity,
+      total: tx.total,
+      date: tx.date,
+      status: tx.status
+    }));
+  }
+
   return (
     <div className="max-w-[1200px] mx-auto h-full flex flex-col font-sans">
       <DiscordBanner />
@@ -24,7 +46,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="flex-1 mt-2">
-        <HistoryTable />
+        <HistoryTable transactions={formattedTxs} />
       </div>
     </div>
   );

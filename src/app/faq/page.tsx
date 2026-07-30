@@ -1,18 +1,32 @@
+"use client";
+
 import { MessageSquare, ShieldAlert, ShoppingBag, Store, Info, ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 function Accordion({ title, content }: { title: string; content: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <details className="group bg-[#181a20] border border-[#262933] rounded-lg mb-3 overflow-hidden transition-all duration-300">
-      <summary className="flex justify-between items-center font-bold text-[14px] text-white cursor-pointer list-none p-5">
+    <div className="bg-[#181a20] border border-[#262933] rounded-lg mb-3 overflow-hidden">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex justify-between items-center font-bold text-[14px] text-white p-5 hover:bg-[#1f2229] transition-colors"
+      >
         {title}
-        <span className="transition group-open:rotate-180">
+        <span className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>
           <ChevronDown size={18} className="text-[#6b7280]" />
         </span>
-      </summary>
-      <div className="text-[13px] text-[#9ca3af] p-5 pt-0 leading-relaxed border-t border-[#262933] mt-2 bg-[#1a1c23]">
-        {content}
+      </button>
+      <div 
+        className={`grid transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+      >
+        <div className="overflow-hidden">
+          <div className="text-[13px] text-[#9ca3af] p-5 pt-0 leading-relaxed border-t border-[#262933] mt-2 bg-[#1a1c23]">
+            {content}
+          </div>
+        </div>
       </div>
-    </details>
+    </div>
   );
 }
 
@@ -43,7 +57,7 @@ export default function FAQPage() {
   ];
 
   return (
-    <div className="font-sans max-w-[900px] mx-auto pb-12">
+    <div className="font-sans max-w-[900px] mx-auto pb-12 pt-8 md:pt-4">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white mb-2">Dúvidas e termos</h1>
         <p className="text-sm text-[#9ca3af]">Perguntas frequentes, política de trocas e termos de uso em um só lugar</p>
@@ -140,11 +154,8 @@ export default function FAQPage() {
 
       <div className="bg-[#1f1e16] border border-[#3f3b1b] rounded-lg p-6 text-center">
         <h3 className="font-bold text-white text-[15px] mb-2">Aprovou? Envie suas avaliações!</h3>
-        <p className="text-[13px] text-[#9ca3af] mb-4">Precisa de ajuda? Use os canais oficiais no Telegram ou no Discord</p>
+        <p className="text-[13px] text-[#9ca3af] mb-4">Precisa de ajuda? Use os canais oficiais no Discord</p>
         <div className="flex justify-center gap-4">
-          <button className="bg-[#229ED9] hover:bg-[#1c82b1] text-white font-bold text-[13px] px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-            <MessageSquare size={16} /> Telegram
-          </button>
           <button className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-[13px] px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2">
             <MessageSquare size={16} /> Discord
           </button>

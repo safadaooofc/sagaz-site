@@ -15,7 +15,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-[#0f1115] h-full flex flex-col border-r border-[#262933] shrink-0 font-sans">
+    <aside className="w-64 bg-[#0f1115] h-full hidden md:flex flex-col border-r border-[#262933] shrink-0 font-sans z-50">
       <div className="p-6 flex items-center gap-3">
         <div className="w-10 h-10 bg-[#eab308] rounded flex items-center justify-center font-black text-2xl text-black">K</div>
         <span className="font-black text-xl text-white tracking-tight leading-tight">KNIGHT<br/><span className="text-[11px] text-[#9ca3af] font-normal tracking-normal">Cartões Digitais</span></span>
@@ -82,9 +82,6 @@ export function Sidebar() {
       </div>
 
       <div className="p-4 space-y-3">
-        <a href="#" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#229ED9] hover:bg-[#1c82b1] text-white rounded-full font-bold text-sm transition-colors">
-          <MessageSquare size={18} /> Entrar no Telegram
-        </a>
         <a href="#" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
           <MessageSquare size={18} /> Entrar no Discord
         </a>

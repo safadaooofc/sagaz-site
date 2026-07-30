@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }
 
     // Registrar Sessão (IP e Browser)
-    const headersList = headers();
+    const headersList = await headers();
     const userAgent = headersList.get("user-agent") || "Unknown Browser";
     const ip = headersList.get("x-forwarded-for") || "Localhost/Unknown IP";
 
@@ -50,9 +50,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="flex h-screen w-full overflow-hidden">
       <Sidebar />
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden w-full">
         <Topbar />
-        <main className="flex-1 overflow-y-auto p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">
           {children}
         </main>
       </div>

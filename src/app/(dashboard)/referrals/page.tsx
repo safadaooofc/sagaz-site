@@ -1,4 +1,5 @@
-import { Users, DollarSign, TrendingUp, Link as LinkIcon, Copy, CheckCircle2, UserPlus, CreditCard } from "lucide-react";
+import { Users, DollarSign, TrendingUp, Link as LinkIcon, CheckCircle2, UserPlus, CreditCard } from "lucide-react";
+import { CopyLinkButton } from "@/components/CopyLinkButton";
 
 export default function ReferralsPage() {
   return (
@@ -44,14 +45,7 @@ export default function ReferralsPage() {
         </div>
         <p className="text-[13px] text-[#9ca3af] mb-4">Compartilhe este link para indicar novos usuários e ganhar 15% de comissão</p>
         
-        <div className="flex gap-2 mb-4">
-          <div className="flex-1 bg-[#1f2229] border border-[#2c303a] rounded-md px-4 py-3 flex items-center overflow-hidden">
-            <span className="text-[13px] text-white font-mono truncate">https://knight.com/registrar?code=69c5cb2ff8a6f791db6f9180</span>
-          </div>
-          <button className="bg-[#eab308] hover:bg-[#ca8a04] text-[#0f1115] p-3 rounded-md transition-colors shrink-0">
-            <Copy size={20} />
-          </button>
-        </div>
+        <CopyLinkButton link="https://knight.com/registrar?code=69c5cb2ff8a6f791db6f9180" />
         
         <div className="flex items-center gap-2 text-[13px] text-[#9ca3af]">
           <CheckCircle2 size={16} className="text-[#22c55e]" />
