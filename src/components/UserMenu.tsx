@@ -10,6 +10,7 @@ interface UserMenuProps {
     name?: string | null;
     email?: string | null;
     image?: string | null;
+    role?: string;
   };
 }
 
@@ -72,6 +73,17 @@ export function UserMenu({ user }: UserMenuProps) {
               <LayoutDashboard size={16} />
               <span className="text-sm font-medium">Dashboard</span>
             </Link>
+
+            {user?.role && ["ADMIN", "SUPERADMIN", "MODERATOR", "OWNER"].includes(user.role) && (
+              <Link 
+                href="/admin" 
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#262933] text-[#9ca3af] hover:text-white transition-colors"
+              >
+                <LayoutDashboard size={16} />
+                <span className="text-sm font-medium">Painel Admin</span>
+              </Link>
+            )}
 
             <Link 
               href="/buy/cards" 
