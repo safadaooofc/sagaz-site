@@ -21,7 +21,7 @@ export function Sidebar() {
         <span className="font-black text-xl text-white tracking-tight leading-tight">KNIGHT<br/><span className="text-[11px] text-[#9ca3af] font-normal tracking-normal">Cartões Digitais</span></span>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-6">
+      <div className="flex-1 overflow-y-auto hide-scrollbar px-4 py-2 space-y-6">
         <div>
           <h3 className="text-[10px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest px-2">Plataforma</h3>
           <nav className="space-y-1">
