@@ -89,6 +89,13 @@ export async function verifyDiscordCode(discordId: string, code: string) {
     data: { discordId }
   });
 
+  await prisma.notification.deleteMany({
+    where: {
+      userId: session.user.id,
+      title: "Vincule seu Discord!"
+    }
+  });
+
   revalidatePath("/settings");
   return { success: true };
 }
