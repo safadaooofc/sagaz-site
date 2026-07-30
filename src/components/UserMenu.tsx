@@ -14,7 +14,7 @@ interface UserMenuProps {
   };
 }
 
-export function UserMenu({ user }: UserMenuProps) {
+export function UserMenu({ user, variant = "topbar" }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -37,21 +37,35 @@ export function UserMenu({ user }: UserMenuProps) {
     <div className="relative font-sans" ref={menuRef}>
       <button 
         onClick={toggleMenu}
-        className="w-10 h-10 rounded-full bg-[#181a20] border border-[#262933] flex items-center justify-center overflow-hidden hover:border-[#4b5563] transition-colors focus:outline-none"
+        className={variant === "sidebar"
+          ? "flex items-center gap-3 w-full text-left focus:outline-none hover:bg-[#181a20] p-2 -mx-2 rounded-lg transition-colors"
+          : "w-10 h-10 rounded-full bg-[#181a20] border border-[#262933] flex items-center justify-center overflow-hidden hover:border-[#4b5563] transition-colors focus:outline-none"}
       >
-        {user?.image ? (
-          <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
-        ) : (
-          <span className="font-bold text-white text-sm">{firstLetter}</span>
+        <div className={variant === "sidebar" ? "w-10 h-10 shrink-0 rounded-full bg-[#181a20] border border-[#1f2229] flex items-center justify-center overflow-hidden" : "w-full h-full"}>
+          {user?.image ? (
+            <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            <span className={variant === "sidebar" ? "font-bold text-white text-lg" : "font-bold text-white text-sm"}>{firstLetter}</span>
+          )}
+        </div>
+        {variant === "sidebar" && (
+          <div className="overflow-hidden leading-tight">
+            <p className="text-sm font-medium text-[#9ca3af] truncate">{user?.name || "Usuário"}</p>
+            <p className="text-[11px] text-[#4b5563] truncate">{user?.email || "email@desconhecido.com"}</p>
+          </div>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-[#181a20] border border-[#262933] rounded-xl shadow-2xl overflow-hidden z-50">
+        <div className={`absolute ${variant === "sidebar" ? "left-0 bottom-full mb-2" : "right-0 mt-2"} w-64 bg-[#181a20] border border-[#262933] rounded-xl shadow-2xl overflow-hidden z-50`}>
           {/* Header do Menu */}
           <div className="p-4 flex items-center gap-3 border-b border-[#262933]">
-            <div className="w-10 h-10 rounded-full bg-[#262933] flex items-center justify-center shrink-0">
-              <span className="font-bold text-white text-sm">{firstLetter}</span>
+            <div className="w-10 h-10 rounded-full bg-[#262933] flex items-center justify-center shrink-0 overflow-hidden">
+              {user?.image ? (
+                <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <span className="font-bold text-white text-sm">{firstLetter}</span>
+              )}
             </div>
             <div className="overflow-hidden">
               <p className="font-bold text-sm text-white truncate">{user?.name || "Usuário"}</p>

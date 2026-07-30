@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Wallet, CreditCard, Key, Users, Gift, Star, Settings, HelpCircle, MessageSquare } from "lucide-react";
+import { UserMenu } from "./UserMenu";
 
-export function Sidebar() {
+export function Sidebar({ user }: { user?: any }) {
   const pathname = usePathname();
 
   const getLinkClass = (path: string) => {
@@ -85,12 +86,8 @@ export function Sidebar() {
         <a href="https://discord.gg/seu-link-aqui" target="_blank" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
           <MessageSquare size={16} /> Entrar no Discord
         </a>
-        <div className="flex items-center gap-3 mt-4 pt-4">
-          <div className="w-10 h-10 rounded-full bg-[#181a20] border border-[#1f2229] flex items-center justify-center font-bold text-white text-lg">a</div>
-          <div className="overflow-hidden leading-tight">
-            <p className="text-sm font-medium text-[#9ca3af] truncate">awd</p>
-            <p className="text-[11px] text-[#4b5563] truncate">p*********@gmail.com</p>
-          </div>
+        <div className="mt-4 pt-4 border-t border-[#1f2229]">
+          <UserMenu user={user} variant="sidebar" />
         </div>
       </div>
     </aside>

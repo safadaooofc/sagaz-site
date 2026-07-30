@@ -5,7 +5,7 @@ async function run() {
   const user = await prisma.user.updateMany({
     where: { email: "paoteste40@gmail.com" },
     data: { role: "SUPERADMIN" }
-  });
+  });7
   console.log(`Updated ${user.count} user(s) successfully!`);
 }
 
