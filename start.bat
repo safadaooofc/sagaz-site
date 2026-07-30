@@ -1,0 +1,6 @@
+@echo off
+echo Limpando o cache do Next.js para evitar problemas de Build/Edge Runtime...
+rmdir /s /q .next
+echo.
+echo Iniciando o Servidor Sagaz (Next.js)...
+npm run dev
