@@ -8,6 +8,7 @@ export async function StatsGrid() {
   let balance = 0;
   let purchasesCount = 0;
   let totalSpent = 0;
+  let txCount = 0;
 
   if (userId) {
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { balance: true } });
