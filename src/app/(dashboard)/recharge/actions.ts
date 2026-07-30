@@ -40,6 +40,8 @@ export async function createCryptoPayment(amount: number, currency: string) {
   const session = await auth();
   if (!session?.user?.id) return { success: false, message: "Não autorizado" };
 
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
     select: { referredById: true }
   });
 
