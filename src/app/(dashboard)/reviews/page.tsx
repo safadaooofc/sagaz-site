@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, ThumbsUp, ChevronDown, X } from "lucide-react";
+import { Star, ThumbsUp, ChevronDown, X, Upload } from "lucide-react";
 import { useState } from "react";
 
 type Review = {
@@ -182,39 +182,58 @@ export default function ReviewsPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="bg-[#181a20] border border-[#1f2229] rounded-xl w-full max-w-[500px] p-6 animate-in zoom-in-95 duration-200">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-white">Deixar Avaliação</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-[#9ca3af] hover:text-white">
-                <X size={20} />
+          <div className="bg-[#111214] border border-[#262933] rounded-xl w-full max-w-[500px] p-6 animate-in zoom-in-95 duration-200 shadow-2xl">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-white mb-1">Deixe sua Avaliação</h2>
+                <p className="text-[13px] text-[#9ca3af]">Compartilhe sua experiência conosco. Sua opinião é muito importante!</p>
+              </div>
+              <button onClick={() => setIsModalOpen(false)} className="text-[#9ca3af] hover:text-white mt-1">
+                <X size={18} />
               </button>
             </div>
 
             <div className="mb-6">
-              <label className="block text-[13px] font-bold text-white mb-2">Nota</label>
+              <label className="block text-[13px] font-bold text-white mb-2">Sua Avaliação *</label>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((s) => (
                   <button key={s} onClick={() => setNewReviewStars(s)}>
-                    <Star size={32} className={s <= newReviewStars ? "text-[#eab308]" : "text-[#262933]"} fill="currentColor" />
+                    <Star size={28} className={s <= newReviewStars ? "text-[#eab308]" : "text-[#4b5563]"} fill={s <= newReviewStars ? "currentColor" : "none"} />
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="space-y-4 mb-6">
+            <div className="space-y-5 mb-6">
               <div>
-                <label className="block text-[13px] font-bold text-white mb-2">Título</label>
-                <input type="text" placeholder="Ex: Muito bom!" className="w-full bg-[#0f1115] border border-[#1f2229] rounded-lg px-4 py-2.5 text-white text-[13px] placeholder-[#4b5563] focus:outline-none focus:border-[#eab308]" />
+                <label className="block text-[13px] font-bold text-white mb-2">Título *</label>
+                <input type="text" placeholder="Resuma sua experiência em poucas palavras" className="w-full bg-[#181a20] border border-[#262933] rounded-lg px-4 py-3 text-white text-[13px] placeholder-[#4b5563] focus:outline-none focus:border-[#4b5563] transition-colors" />
+                <p className="text-[11px] text-[#4b5563] mt-1.5">0/100 caracteres</p>
               </div>
               <div>
-                <label className="block text-[13px] font-bold text-white mb-2">Comentário</label>
-                <textarea rows={4} placeholder="Escreva sua experiência..." className="w-full bg-[#0f1115] border border-[#1f2229] rounded-lg px-4 py-2.5 text-white text-[13px] placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] resize-none"></textarea>
+                <label className="block text-[13px] font-bold text-white mb-2">Seu Comentário *</label>
+                <textarea rows={4} placeholder="Conte-nos mais sobre sua experiência..." className="w-full bg-[#181a20] border border-[#262933] rounded-lg px-4 py-3 text-white text-[13px] placeholder-[#4b5563] focus:outline-none focus:border-[#4b5563] resize-none transition-colors"></textarea>
+                <p className="text-[11px] text-[#4b5563] mt-1.5">0/1000 caracteres</p>
+              </div>
+              
+              <div>
+                <label className="block text-[13px] font-bold text-white mb-0.5">Imagens (Opcional)</label>
+                <p className="text-[11px] text-[#9ca3af] mb-3">Adicione até 5 imagens (máx 16MB cada)</p>
+                <div className="border border-dashed border-[#262933] rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-[#4b5563] transition-colors bg-[#181a20]/50">
+                  <Upload size={24} className="text-[#6b7280] mb-3" />
+                  <span className="text-[13px] text-[#6b7280]">Clique para adicionar imagens</span>
+                </div>
               </div>
             </div>
 
-            <button onClick={() => setIsModalOpen(false)} className="w-full bg-[#eab308] hover:bg-[#ca8a04] text-[#0f1115] font-bold text-[13px] py-3 rounded-lg transition-colors">
-              Enviar Avaliação
-            </button>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-lg text-[13px] font-bold text-white bg-transparent border border-[#262933] hover:bg-[#181a20] transition-colors">
+                Cancelar
+              </button>
+              <button onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-lg text-[13px] font-bold text-[#0f1115] bg-[#eab308] hover:bg-[#ca8a04] transition-colors">
+                Enviar Avaliação
+              </button>
+            </div>
           </div>
         </div>
       )}

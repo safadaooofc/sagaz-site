@@ -46,16 +46,30 @@ export default function BuyCardsPage() {
           <input 
             type="text"
             placeholder="Pesquisar por banco, nível, BIN..."
-            className="w-full bg-[#181a20] border border-transparent rounded-lg pl-10 pr-4 py-3 text-sm text-white placeholder-[#4b5563] focus:outline-none focus:border-[#262933] transition-colors"
+            className="w-full bg-[#181a20] border border-[#1f2229] rounded-lg pl-10 pr-4 py-3 text-sm text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
           />
         </div>
         <div className="flex gap-4">
-          <button className="bg-[#181a20] border border-transparent hover:border-[#262933] text-white px-4 py-3 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
-            Todos os níveis <ChevronDown size={16} className="text-[#4b5563]" />
-          </button>
-          <button className="bg-[#181a20] border border-transparent hover:border-[#262933] text-white px-4 py-3 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
-            Todas modalidades <ChevronDown size={16} className="text-[#4b5563]" />
-          </button>
+          <div className="relative">
+            <select className="appearance-none bg-[#181a20] border border-[#1f2229] text-white px-4 py-3 pr-10 rounded-lg text-sm font-bold transition-colors focus:outline-none focus:border-[#eab308]">
+              <option value="all">Todos os níveis</option>
+              <option value="black">Black</option>
+              <option value="business">Business</option>
+              <option value="classic">Classic</option>
+              <option value="gold">Gold</option>
+              <option value="infinite">Infinite</option>
+              <option value="platinum">Platinum</option>
+            </select>
+            <ChevronDown size={16} className="text-[#4b5563] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
+          
+          <div className="relative">
+            <select className="appearance-none bg-[#181a20] border border-[#1f2229] text-white px-4 py-3 pr-10 rounded-lg text-sm font-bold transition-colors focus:outline-none focus:border-[#eab308]">
+              <option value="all">Todas as modalidades</option>
+              <option value="credit">Credit</option>
+            </select>
+            <ChevronDown size={16} className="text-[#4b5563] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
         </div>
       </div>
 
