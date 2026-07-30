@@ -63,7 +63,43 @@ export async function logoutOtherDevices() {
 }
 
 export async function linkDiscord() {
-  await auth(); // Verifica sessão, mas o signIn cuida do resto
+  await auth(); 
   const { signIn } = await import("@/auth");
   await signIn("discord");
+}
+
+export async function sendDiscordVerificationCode(discordId: string) {
+  const session = await auth();
+  if (!session?.user?.id) return { success: false, error: "Não autorizado" };
+
+  // Mock implementation for Discord DM sending
+  console.log(`[Mock] Sending verification code to Discord ID: ${discordId}`);
+  return { success: true };
+}
+
+export async function verifyDiscordCode(discordId: string, code: string) {
+  const session = await auth();
+  if (!session?.user?.id) return { success: false, error: "Não autorizado" };
+
+  // Mock implementation: Accept any code length 6 or more
+  if (code.length < 6) return { success: false, error: "Código inválido" };
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { discordId }
+  });
+
+  revalidatePath("/settings");
+  return { success: true };
+}
+
+export async function checkBooster() {
+  const session = await auth();
+  if (!session?.user?.id) return { success: false, error: "Não autorizado" };
+
+  const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { discordId: true } });
+  if (!user?.discordId) return { success: false, error: "Discord não vinculado" };
+
+  // Mock implementation: randomly assign booster status or just succeed
+  return { success: true };
 }

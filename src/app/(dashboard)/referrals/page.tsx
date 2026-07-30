@@ -1,4 +1,4 @@
-import { Users, DollarSign, TrendingUp, Link as LinkIcon, CheckCircle2, UserPlus, CreditCard } from "lucide-react";
+import { DollarSign, TrendingUp, Link as LinkIcon, CheckCircle2, UserPlus, CreditCard } from "lucide-react";
 import { CopyLinkButton } from "@/components/CopyLinkButton";
 
 export default function ReferralsPage() {

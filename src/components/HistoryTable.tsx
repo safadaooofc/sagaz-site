@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 

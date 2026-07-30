@@ -25,7 +25,7 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${inter.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">{children}</body>
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-background text-foreground">{children}</body>
     </html>
   );
 }

@@ -7,8 +7,9 @@ const { auth } = NextAuth({
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
-        (session.user as any).role = token.role;
-        (session.user as any).tokenVersion = token.tokenVersion;
+        const u = session.user as { role?: unknown; tokenVersion?: unknown };
+        u.role = token.role;
+        u.tokenVersion = token.tokenVersion;
       }
       return session;
     }
@@ -16,7 +17,8 @@ const { auth } = NextAuth({
 });
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
-  const userRole = (req.auth?.user as any)?.role || "USER";
+  const userExt = req.auth?.user as { role?: string } | undefined;
+  const userRole = userExt?.role || "USER";
   const { pathname } = req.nextUrl;
 
   // Define as rotas públicas que não precisam de login

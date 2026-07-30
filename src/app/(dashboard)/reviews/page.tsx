@@ -27,6 +27,7 @@ export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
   const [filterStar, setFilterStar] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState<"recent" | "helpful">("recent");
+  const [isSortOpen, setIsSortOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newReviewStars, setNewReviewStars] = useState(5);
 
@@ -102,7 +103,7 @@ export default function ReviewsPage() {
           <div className="flex gap-2">
             <button 
               onClick={() => setFilterStar(null)}
-              className={`px-3 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap transition-colors ${filterStar === null ? 'bg-[#eab308] text-[#0f1115]' : 'bg-[#1f2229] hover:bg-[#262933] text-white'}`}
+              className={`px-4 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap transition-colors ${filterStar === null ? 'border border-[#eab308] text-[#eab308] bg-transparent' : 'bg-[#1f2229] hover:bg-[#262933] text-white'}`}
             >
               Todas
             </button>
@@ -110,9 +111,9 @@ export default function ReviewsPage() {
               <button 
                 key={s} 
                 onClick={() => setFilterStar(s)}
-                className={`px-3 py-1.5 rounded-full text-[12px] font-bold transition-colors flex items-center gap-1 shrink-0 ${filterStar === s ? 'bg-[#eab308] text-[#0f1115]' : 'bg-[#1f2229] hover:bg-[#262933] text-white'}`}
+                className={`px-3 py-1.5 rounded-full text-[12px] font-bold transition-colors flex items-center gap-1.5 shrink-0 ${filterStar === s ? 'border border-[#eab308] text-[#eab308] bg-transparent' : 'bg-[#1f2229] hover:bg-[#262933] text-white'}`}
               >
-                {s} <Star size={10} className={filterStar === s ? "text-[#0f1115]" : "text-[#eab308]"} fill="currentColor" />
+                {s} <Star size={10} className="text-[#eab308]" fill="currentColor" />
               </button>
             ))}
           </div>
@@ -120,14 +121,45 @@ export default function ReviewsPage() {
         
         <div className="flex items-center gap-2 shrink-0">
           <span className="text-[13px] text-[#9ca3af]">Ordenar:</span>
-          <select 
-            value={sortBy} 
-            onChange={(e) => setSortBy(e.target.value as "recent" | "helpful")}
-            className="bg-[#1f2229] border border-[#262933] text-white px-3 py-1.5 rounded-md text-[13px] font-bold focus:outline-none focus:border-[#eab308]"
-          >
-            <option value="recent">Mais recentes</option>
-            <option value="helpful">Mais úteis</option>
-          </select>
+          <div className="relative">
+            <button 
+              onClick={() => setIsSortOpen(!isSortOpen)}
+              className={`flex items-center justify-between gap-2 px-4 py-1.5 rounded-full text-[13px] font-bold transition-colors min-w-[140px] ${isSortOpen ? 'border border-[#eab308] text-white bg-transparent' : 'bg-[#1f2229] hover:bg-[#262933] text-white border border-transparent'}`}
+            >
+              {sortBy === "recent" ? "Mais recentes" : "Mais úteis"}
+              <ChevronDown size={14} className="text-[#9ca3af]" />
+            </button>
+            
+            {isSortOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setIsSortOpen(false)}></div>
+                <div className="absolute right-0 top-full mt-2 w-[160px] bg-[#181a20] border border-[#1f2229] rounded-xl shadow-xl overflow-hidden z-50 py-1">
+                  <button
+                    onClick={() => { setSortBy("recent"); setIsSortOpen(false); }}
+                    className={`w-full text-left px-4 py-2.5 text-[13px] font-bold hover:bg-[#1f2229] transition-colors ${sortBy === "recent" ? "text-[#eab308]" : "text-white"}`}
+                  >
+                    Mais recentes
+                  </button>
+                  <button
+                    onClick={() => { setSortBy("helpful"); setIsSortOpen(false); }}
+                    className={`w-full text-left px-4 py-2.5 text-[13px] font-bold hover:bg-[#1f2229] transition-colors ${sortBy === "helpful" ? "text-[#eab308]" : "text-white"}`}
+                  >
+                    Mais úteis
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2.5 text-[13px] font-bold hover:bg-[#1f2229] transition-colors text-white"
+                  >
+                    Maior nota
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2.5 text-[13px] font-bold hover:bg-[#1f2229] transition-colors text-white"
+                  >
+                    Menor nota
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 

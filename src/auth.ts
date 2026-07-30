@@ -93,9 +93,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (account?.provider === "discord" && user?.id && profile?.id) {
         try {
           const discordIdStr = String(profile.id);
+          const currentUserId = user.id;
           
           await prisma.user.update({
-            where: { id: user.id },
+            where: { id: currentUserId },
             data: { 
               image: user.image,
               discordId: discordIdStr
@@ -111,14 +112,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             await prisma.$transaction(async (tx) => {
               // Adiciona saldo
               await tx.user.update({
-                where: { id: user.id },
+                where: { id: currentUserId },
                 data: { balance: { increment: pending.pendingBalance } }
               });
 
               // Registra log financeiro
               await tx.balanceMovement.create({
                 data: {
-                  userId: user.id,
+                  userId: currentUserId,
                   amount: pending.pendingBalance,
                   type: "DISCORD_INVITE_REWARD_RETROACTIVE",
                   description: `Resgate retroativo de Bônus de Indicação (${pending.invitesCount} invites)`
@@ -128,7 +129,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               // Cria notificação
               await tx.notification.create({
                 data: {
-                  userId: user.id,
+                  userId: currentUserId,
                   title: "Saldo de Invites Resgatado!",
                   message: `Boa! Como você conectou sua conta, resgatamos R$ ${pending.pendingBalance.toFixed(2).replace('.', ',')} referentes a ${pending.invitesCount} invites que você fez no servidor!`,
                   type: "INVITE_REWARD_RETROACTIVE"

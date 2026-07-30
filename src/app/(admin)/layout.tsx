@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldAlert, Users, ShoppingCart, Tag, Settings, ArrowLeft, Gift, MessageSquare } from "lucide-react";
+import { ShieldAlert, Users, ShoppingCart, Tag, Settings, ArrowLeft, Gift, MessageSquare, DollarSign } from "lucide-react";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 

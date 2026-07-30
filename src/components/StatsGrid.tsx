@@ -6,7 +6,6 @@ export async function StatsGrid() {
   const userId = session?.user?.id;
 
   let balance = 0;
-  let purchasesCount = 0;
   let totalSpent = 0;
   let txCount = 0;
 
@@ -26,8 +25,8 @@ export async function StatsGrid() {
   const avgTicket = txCount > 0 ? totalSpent / txCount : 0;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-sans">
-      <div className="bg-[#181a20] border border-[#1f2229] rounded-lg p-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 font-sans h-full">
+      <div className="bg-[#181a20] border border-[#1f2229] rounded-lg p-6 flex flex-col justify-center min-h-[140px]">
         <p className="text-[11px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest">Saldo</p>
         <h3 className="text-3xl font-bold text-white mb-1">
           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balance)}
@@ -35,13 +34,13 @@ export async function StatsGrid() {
         <p className="text-[11px] text-[#6b7280]">Disponível para compras</p>
       </div>
 
-      <div className="bg-[#181a20] border border-[#1f2229] rounded-lg p-5">
+      <div className="bg-[#181a20] border border-[#1f2229] rounded-lg p-6 flex flex-col justify-center min-h-[140px]">
         <p className="text-[11px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest">Compras</p>
         <h3 className="text-3xl font-bold text-white mb-1">{txCount}</h3>
         <p className="text-[11px] text-[#6b7280]">Cartões adquiridos</p>
       </div>
 
-      <div className="bg-[#181a20] border border-[#1f2229] rounded-lg p-5">
+      <div className="bg-[#181a20] border border-[#1f2229] rounded-lg p-6 flex flex-col justify-center min-h-[140px]">
         <p className="text-[11px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest">Total Gasto</p>
         <h3 className="text-3xl font-bold text-white mb-1">
           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSpent)}
@@ -49,7 +48,7 @@ export async function StatsGrid() {
         <p className="text-[11px] text-[#6b7280]">Desde o cadastro</p>
       </div>
 
-      <div className="bg-[#181a20] border border-[#1f2229] rounded-lg p-5">
+      <div className="bg-[#181a20] border border-[#1f2229] rounded-lg p-6 flex flex-col justify-center min-h-[140px]">
         <p className="text-[11px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest">Ticket Médio</p>
         <h3 className="text-3xl font-bold text-white mb-1">
           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(avgTicket)}
