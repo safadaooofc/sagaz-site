@@ -89,15 +89,62 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async signIn({ user, account, profile }) {
-      // Sincroniza a foto do Discord no banco de dados
-      if (account?.provider === "discord" && user?.id && user?.image) {
+      // Sincroniza a foto do Discord no banco de dados e verifica recompensas pendentes
+      if (account?.provider === "discord" && user?.id && profile?.id) {
         try {
+          const discordIdStr = String(profile.id);
+          
           await prisma.user.update({
             where: { id: user.id },
-            data: { image: user.image }
+            data: { 
+              image: user.image,
+              discordId: discordIdStr
+            }
           });
+
+          // Puxa recompensas pendentes desse discordId
+          const pending = await prisma.pendingDiscordReward.findUnique({
+            where: { discordId: discordIdStr }
+          });
+
+          if (pending && pending.pendingBalance > 0) {
+            await prisma.$transaction(async (tx) => {
+              // Adiciona saldo
+              await tx.user.update({
+                where: { id: user.id },
+                data: { balance: { increment: pending.pendingBalance } }
+              });
+
+              // Registra log financeiro
+              await tx.balanceMovement.create({
+                data: {
+                  userId: user.id,
+                  amount: pending.pendingBalance,
+                  type: "DISCORD_INVITE_REWARD_RETROACTIVE",
+                  description: `Resgate retroativo de Bônus de Indicação (${pending.invitesCount} invites)`
+                }
+              });
+
+              // Cria notificação
+              await tx.notification.create({
+                data: {
+                  userId: user.id,
+                  title: "Saldo de Invites Resgatado!",
+                  message: `Boa! Como você conectou sua conta, resgatamos R$ ${pending.pendingBalance.toFixed(2).replace('.', ',')} referentes a ${pending.invitesCount} invites que você fez no servidor!`,
+                  type: "INVITE_REWARD_RETROACTIVE"
+                }
+              });
+
+              // Zera o saldo pendente (mas mantém histórico)
+              await tx.pendingDiscordReward.update({
+                where: { discordId: discordIdStr },
+                data: { pendingBalance: 0 }
+              });
+            });
+            console.log(`Recompensa retroativa de R$ ${pending.pendingBalance} injetada para ${user.email}`);
+          }
         } catch (e) {
-          console.error("Falha ao sincronizar avatar:", e);
+          console.error("Falha ao sincronizar avatar e recompensas:", e);
         }
       }
 

@@ -1,5 +1,19 @@
-import { auth } from "@/auth"
+import NextAuth from "next-auth"
 
+const { auth } = NextAuth({
+  providers: [],
+  session: { strategy: "jwt" },
+  callbacks: {
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        (session.user as any).role = token.role;
+        (session.user as any).tokenVersion = token.tokenVersion;
+      }
+      return session;
+    }
+  }
+});
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const userRole = (req.auth?.user as any)?.role || "USER";

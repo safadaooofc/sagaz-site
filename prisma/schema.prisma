@@ -30,6 +30,7 @@ model User {
   transactions  Transaction[]
   balanceLogs   BalanceMovement[]
   reviews       Review[]
+  notifications Notification[]
   
   referredBy    User?           @relation("Referrals", fields: [referredById], references: [id])
   referredUsers User[]          @relation("Referrals")
@@ -227,4 +228,24 @@ model DropCode {
   createdAt DateTime @default(now())
 
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model PendingDiscordReward {
+  discordId      String   @id
+  pendingBalance Float    @default(0.0)
+  invitesCount   Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  type      String   @default("SYSTEM")
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -22,6 +22,7 @@ export default async function FinancePage() {
   const totalRecharges = getAmountByType("RECHARGE");
   const totalReferrals = getAmountByType("REFERRAL_REWARD");
   const totalGifts = getAmountByType("GIFT_CODE");
+  const totalDiscord = getAmountByType("DISCORD_INVITE_REWARD") + getAmountByType("DISCORD_INVITE_REWARD_RETROACTIVE");
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -29,6 +30,8 @@ export default async function FinancePage() {
       case "REFERRAL_REWARD": return <Gift size={16} className="text-yellow-500" />;
       case "GIFT_CODE": return <Gift size={16} className="text-blue-500" />;
       case "PURCHASE": return <ShoppingCart size={16} className="text-red-500" />;
+      case "DISCORD_INVITE_REWARD":
+      case "DISCORD_INVITE_REWARD_RETROACTIVE": return <Gift size={16} className="text-purple-500" />;
       default: return <Info size={16} className="text-gray-500" />;
     }
   };
@@ -42,18 +45,22 @@ export default async function FinancePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-[#181a20] border border-[#262933] rounded-xl p-6">
-          <p className="text-sm font-bold text-[#9ca3af] mb-1">Total Recarregado (PIX/Crypto)</p>
-          <h3 className="text-3xl font-black text-green-500">R$ {totalRecharges.toFixed(2)}</h3>
+          <p className="text-sm font-bold text-[#9ca3af] mb-1">Total Recarregado</p>
+          <h3 className="text-2xl font-black text-green-500">R$ {totalRecharges.toFixed(2)}</h3>
         </div>
         <div className="bg-[#181a20] border border-[#262933] rounded-xl p-6">
-          <p className="text-sm font-bold text-[#9ca3af] mb-1">Total Dado em Convites</p>
-          <h3 className="text-3xl font-black text-yellow-500">R$ {totalReferrals.toFixed(2)}</h3>
+          <p className="text-sm font-bold text-[#9ca3af] mb-1">Total Convites (Site)</p>
+          <h3 className="text-2xl font-black text-yellow-500">R$ {totalReferrals.toFixed(2)}</h3>
+        </div>
+        <div className="bg-[#181a20] border border-[#262933] rounded-xl p-6">
+          <p className="text-sm font-bold text-[#9ca3af] mb-1">Total Convites (Discord)</p>
+          <h3 className="text-2xl font-black text-purple-500">R$ {totalDiscord.toFixed(2)}</h3>
         </div>
         <div className="bg-[#181a20] border border-[#262933] rounded-xl p-6">
           <p className="text-sm font-bold text-[#9ca3af] mb-1">Total em Gift Codes</p>
-          <h3 className="text-3xl font-black text-blue-500">R$ {totalGifts.toFixed(2)}</h3>
+          <h3 className="text-2xl font-black text-blue-500">R$ {totalGifts.toFixed(2)}</h3>
         </div>
       </div>
 
