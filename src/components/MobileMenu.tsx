@@ -37,7 +37,7 @@ export function MobileMenu() {
 
       {/* Drawer */}
       <div 
-        className={`fixed inset-y-0 left-0 w-64 bg-[#0f1115] border-r border-[#262933] z-50 transform transition-transform duration-300 flex flex-col font-sans ${
+        className={`fixed inset-y-0 left-0 w-64 bg-[#0f1115] border-r border-[#1f2229] z-50 transform transition-transform duration-300 flex flex-col font-sans ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -56,16 +56,16 @@ export function MobileMenu() {
             <h3 className="text-[10px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest px-2">Plataforma</h3>
             <nav className="space-y-1">
               <Link href="/dashboard" onClick={closeMenu} className={getLinkClass("/dashboard")}>
-                <LayoutDashboard size={18} /> Dashboard
+                <LayoutDashboard size={16} /> Dashboard
               </Link>
               <Link href="/recharge" onClick={closeMenu} className={getLinkClass("/recharge")}>
-                <Wallet size={18} /> Recarga de Saldo
+                <Wallet size={16} /> Recarga de Saldo
               </Link>
               <Link href="/buy/cards" onClick={closeMenu} className={getLinkClass("/buy/cards")}>
-                <CreditCard size={18} /> Comprar Cartões
+                <CreditCard size={16} /> Comprar Cartões
               </Link>
               <Link href="/buy/logins" onClick={closeMenu} className={getLinkClass("/buy/logins")}>
-                <Key size={18} /> Comprar Logins
+                <Key size={16} /> Comprar Logins
               </Link>
             </nav>
           </div>
@@ -74,13 +74,13 @@ export function MobileMenu() {
             <h3 className="text-[10px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest px-2">Recursos</h3>
             <nav className="space-y-1">
               <Link href="/referrals" onClick={closeMenu} className={getLinkClass("/referrals")}>
-                <Users size={18} /> Indicação
+                <Users size={16} /> Indicação
               </Link>
               <Link href="/drops" onClick={closeMenu} className={getLinkClass("/drops")}>
-                <Gift size={18} /> Drops
+                <Gift size={16} /> Drops
               </Link>
               <Link href="/reviews" onClick={closeMenu} className={getLinkClass("/reviews")}>
-                <Star size={18} /> Avaliações
+                <Star size={16} /> Avaliações
               </Link>
             </nav>
           </div>
@@ -89,18 +89,21 @@ export function MobileMenu() {
             <h3 className="text-[10px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest px-2">Conta e Suporte</h3>
             <nav className="space-y-1">
               <Link href="/settings" onClick={closeMenu} className={getLinkClass("/settings")}>
-                <Settings size={18} /> Configurações
+                <Settings size={16} /> Configurações
+              </Link>
+              <Link href="/redeem" onClick={closeMenu} className={getLinkClass("/redeem")}>
+                <Gift size={16} /> Resgatar Gift
               </Link>
               <Link href="/faq" onClick={closeMenu} className={getLinkClass("/faq")}>
-                <HelpCircle size={18} /> Dúvidas e termos
+                <HelpCircle size={16} /> Dúvidas e termos
               </Link>
             </nav>
           </div>
         </div>
 
-        <div className="p-4 border-t border-[#262933]">
+        <div className="p-4 border-t border-[#1f2229]">
           <a href="#" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
-            <MessageSquare size={18} /> Entrar no Discord
+            <MessageSquare size={16} /> Entrar no Discord
           </a>
         </div>
       </div>

@@ -15,7 +15,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-[#0f1115] h-full hidden md:flex flex-col border-r border-[#262933] shrink-0 font-sans z-50">
+    <aside className="w-64 bg-[#0f1115] h-full hidden md:flex flex-col border-r border-[#1f2229] shrink-0 font-sans z-50">
       <div className="p-6 flex items-center gap-3">
         <div className="w-10 h-10 bg-[#eab308] rounded flex items-center justify-center font-black text-2xl text-black">K</div>
         <span className="font-black text-xl text-white tracking-tight leading-tight">KNIGHT<br/><span className="text-[11px] text-[#9ca3af] font-normal tracking-normal">Cartões Digitais</span></span>
@@ -26,19 +26,19 @@ export function Sidebar() {
           <h3 className="text-[10px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest px-2">Plataforma</h3>
           <nav className="space-y-1">
             <Link href="/dashboard" className={getLinkClass("/dashboard")}>
-              <LayoutDashboard size={18} />
+              <LayoutDashboard size={16} />
               Dashboard
             </Link>
             <Link href="/recharge" className={getLinkClass("/recharge")}>
-              <Wallet size={18} />
+              <Wallet size={16} />
               Recarga de Saldo
             </Link>
             <Link href="/buy/cards" className={getLinkClass("/buy/cards")}>
-              <CreditCard size={18} />
+              <CreditCard size={16} />
               Comprar Cartões
             </Link>
             <Link href="/buy/logins" className={getLinkClass("/buy/logins")}>
-              <Key size={18} />
+              <Key size={16} />
               Comprar Logins
             </Link>
           </nav>
@@ -48,15 +48,15 @@ export function Sidebar() {
           <h3 className="text-[10px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest px-2">Recursos</h3>
           <nav className="space-y-1">
             <Link href="/referrals" className={getLinkClass("/referrals")}>
-              <Users size={18} />
+              <Users size={16} />
               Indicação
             </Link>
             <Link href="/drops" className={getLinkClass("/drops")}>
-              <Gift size={18} />
+              <Gift size={16} />
               Drops
             </Link>
             <Link href="/reviews" className={getLinkClass("/reviews")}>
-              <Star size={18} />
+              <Star size={16} />
               Avaliações
             </Link>
           </nav>
@@ -65,16 +65,16 @@ export function Sidebar() {
         <div>
           <h3 className="text-[10px] font-bold text-[#4b5563] mb-3 uppercase tracking-widest px-2">Conta e Suporte</h3>
           <nav className="space-y-1">
-            <Link href="#" className={getLinkClass("/settings")}>
-              <Settings size={18} />
+            <Link href="/settings" className={getLinkClass("/settings")}>
+              <Settings size={16} />
               Configurações
             </Link>
-            <Link href="#" className={getLinkClass("/redeem")}>
-              <Gift size={18} />
+            <Link href="/redeem" className={getLinkClass("/redeem")}>
+              <Gift size={16} />
               Resgatar Gift
             </Link>
             <Link href="/faq" className={getLinkClass("/faq")}>
-              <HelpCircle size={18} />
+              <HelpCircle size={16} />
               Dúvidas e termos
             </Link>
           </nav>
@@ -83,10 +83,10 @@ export function Sidebar() {
 
       <div className="p-4 space-y-3">
         <a href="#" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
-          <MessageSquare size={18} /> Entrar no Discord
+          <MessageSquare size={16} /> Entrar no Discord
         </a>
         <div className="flex items-center gap-3 mt-4 pt-4">
-          <div className="w-10 h-10 rounded-full bg-[#181a20] border border-[#262933] flex items-center justify-center font-bold text-white text-lg">a</div>
+          <div className="w-10 h-10 rounded-full bg-[#181a20] border border-[#1f2229] flex items-center justify-center font-bold text-white text-lg">a</div>
           <div className="overflow-hidden leading-tight">
             <p className="text-sm font-medium text-[#9ca3af] truncate">awd</p>
             <p className="text-[11px] text-[#4b5563] truncate">p*********@gmail.com</p>

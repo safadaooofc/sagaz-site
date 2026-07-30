@@ -2,12 +2,13 @@
 
 import { MessageSquare, ShieldAlert, ShoppingBag, Store, Info, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 function Accordion({ title, content }: { title: string; content: string }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="bg-[#181a20] border border-[#262933] rounded-lg mb-3 overflow-hidden">
+    <div className="bg-[#181a20] border border-[#1f2229] rounded-lg mb-3 overflow-hidden">
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex justify-between items-center font-bold text-[14px] text-white p-5 hover:bg-[#1f2229] transition-colors"
@@ -21,7 +22,7 @@ function Accordion({ title, content }: { title: string; content: string }) {
         className={`grid transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
       >
         <div className="overflow-hidden">
-          <div className="text-[13px] text-[#9ca3af] p-5 pt-0 leading-relaxed border-t border-[#262933] mt-2 bg-[#1a1c23]">
+          <div className="text-[13px] text-[#9ca3af] p-5 pt-0 leading-relaxed border-t border-[#1f2229] mt-2 bg-[#1a1c23]">
             {content}
           </div>
         </div>
@@ -30,7 +31,7 @@ function Accordion({ title, content }: { title: string; content: string }) {
   );
 }
 
-export default function FAQPage() {
+export function FaqContent({ isPublic = false }: { isPublic?: boolean }) {
   const faq1 = [
     { title: "O que são M1X?", content: "Cartões de níveis diversos de Standard até Platinum. Material de alta qualidade." },
     { title: "O que são LOGS?", content: "Contas aquecidas e antigas com histórico de compras." },
@@ -57,7 +58,19 @@ export default function FAQPage() {
   ];
 
   return (
-    <div className="font-sans max-w-[900px] mx-auto pb-12 pt-8 md:pt-4">
+    <div className={`font-sans max-w-[900px] mx-auto pb-12 ${isPublic ? 'pt-8' : ''}`}>
+      {isPublic && (
+        <div className="flex justify-between items-center mb-10 pb-6 border-b border-[#1f2229]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#eab308] rounded flex items-center justify-center font-black text-2xl text-black">K</div>
+            <span className="font-black text-xl text-white tracking-tight">KNIGHT</span>
+          </div>
+          <Link href="/login" className="bg-[#eab308] text-[#0f1115] font-bold text-[13px] px-6 py-2.5 rounded-lg">
+            Entrar
+          </Link>
+        </div>
+      )}
+
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white mb-2">Dúvidas e termos</h1>
         <p className="text-sm text-[#9ca3af]">Perguntas frequentes, política de trocas e termos de uso em um só lugar</p>
@@ -93,7 +106,7 @@ export default function FAQPage() {
           {sites.map((site, i) => {
             const Icon = site.icon;
             return (
-              <div key={i} className="bg-[#181a20] border border-[#262933] rounded-lg p-5 flex items-start gap-4">
+              <div key={i} className="bg-[#181a20] border border-[#1f2229] rounded-lg p-5 flex items-start gap-4">
                 <div className="w-10 h-10 rounded bg-[#1f2229] border border-[#2c303a] flex items-center justify-center shrink-0">
                   <Icon size={18} className="text-[#eab308]" />
                 </div>
@@ -152,13 +165,13 @@ export default function FAQPage() {
         </div>
       </div>
 
-      <div className="bg-[#1f1e16] border border-[#3f3b1b] rounded-lg p-6 text-center">
+      <div className="bg-[#181a20] border border-[#1f2229] rounded-lg p-6 text-center">
         <h3 className="font-bold text-white text-[15px] mb-2">Aprovou? Envie suas avaliações!</h3>
         <p className="text-[13px] text-[#9ca3af] mb-4">Precisa de ajuda? Use os canais oficiais no Discord</p>
         <div className="flex justify-center gap-4">
-          <button className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-[13px] px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2">
+          <a href="#" className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-[13px] px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2">
             <MessageSquare size={16} /> Discord
-          </button>
+          </a>
         </div>
       </div>
     </div>
