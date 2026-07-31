@@ -8,7 +8,7 @@ export default async function AdminPurchasesPage() {
   if (!session?.user) redirect("/");
 
   const purchases = await prisma.transaction.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { date: 'desc' },
     include: {
       user: {
         select: { name: true, email: true, image: true }

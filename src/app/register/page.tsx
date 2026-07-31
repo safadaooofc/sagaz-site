@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -52,6 +53,7 @@ export default function RegisterPage() {
         password,
         code,
         name,
+        inviteCode,
         isRegister: "true",
         redirect: false,
       });
@@ -128,6 +130,19 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors tracking-widest"
                 placeholder="••••••••"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-white mb-2 flex justify-between">
+                <span>Código de Convite</span>
+                <span className="text-[#9ca3af] font-normal text-xs">(Opcional)</span>
+              </label>
+              <input 
+                type="text"
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
+                placeholder="Ex: XYZ123"
               />
             </div>
             

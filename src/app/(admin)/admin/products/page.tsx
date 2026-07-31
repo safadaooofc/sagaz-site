@@ -11,5 +11,18 @@ export default async function AdminProductsPage() {
     orderBy: { name: 'asc' }
   });
 
-  return <ProductsClient products={products} categories={categories} />;
+  const transactions = await prisma.transaction.findMany({
+    where: { status: 'COMPLETED' },
+    select: { productId: true, quantity: true, total: true, date: true }
+  });
+
+  // Calculate stats
+  const productStats = products.map(p => {
+    const pTrans = transactions.filter(t => t.productId === p.id);
+    const soldCount = pTrans.reduce((acc, t) => acc + t.quantity, 0);
+    const revenue = pTrans.reduce((acc, t) => acc + t.total, 0);
+    return { ...p, soldCount, revenue };
+  });
+
+  return <ProductsClient products={productStats} categories={categories} transactions={transactions} />;
 }

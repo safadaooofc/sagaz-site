@@ -8,7 +8,7 @@ export async function createBalanceGift(formData: FormData) {
   const session = await auth();
   const userRole = (session?.user as any)?.role;
   
-  if (userRole !== "ADMIN" && userRole !== "SUPERADMIN") {
+  if (userRole !== "ADMIN" && userRole !== "SUPERADMIN" && userRole !== "OWNER") {
     throw new Error("Não autorizado");
   }
 
@@ -35,7 +35,7 @@ export async function createProductDrop(formData: FormData) {
   const session = await auth();
   const userRole = (session?.user as any)?.role;
   
-  if (userRole !== "ADMIN" && userRole !== "SUPERADMIN") {
+  if (userRole !== "ADMIN" && userRole !== "SUPERADMIN" && userRole !== "OWNER") {
     throw new Error("Não autorizado");
   }
 

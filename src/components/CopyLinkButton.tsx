@@ -1,15 +1,20 @@
 "use client";
 
 import { Copy, CheckCircle2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function CopyLinkButton({ link }: { link: string }) {
   const [copied, setCopied] = useState(false);
 
-  // Calcula o link final no client-side para suportar links relativos
-  const fullLink = typeof window !== 'undefined' && link.startsWith('/')
-    ? `${window.location.origin}${link}`
-    : link;
+  const [displayLink, setDisplayLink] = useState(link);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && link.startsWith('/')) {
+      setDisplayLink(`${window.location.origin}${link}`);
+    }
+  }, [link]);
+
+  const fullLink = displayLink;
 
   const handleCopy = async () => {
     try {

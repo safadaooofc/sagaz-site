@@ -20,14 +20,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Senha", type: "password" },
         code: { label: "Código OTP", type: "text" },
         isRegister: { label: "isRegister", type: "text" },
-        name: { label: "Name", type: "text" }
+        name: { label: "Name", type: "text" },
+        inviteCode: { label: "Invite Code", type: "text" }
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.code) {
           throw new Error("Dados incompletos");
         }
 
-        const { email, password, code, isRegister, name } = credentials;
+        const { email, password, code, isRegister, name, inviteCode } = credentials;
 
         // Verify OTP
         const otpRecord = await prisma.otpCode.findFirst({
@@ -48,13 +49,76 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Handle Registration
         if (isRegister === "true") {
           const hashedPassword = await bcrypt.hash(password as string, 10);
+          
+          let referredById = null;
+          let newBalance = 0;
+
+          // Check Invite Code
+          if (inviteCode && typeof inviteCode === 'string' && inviteCode.length > 0) {
+            const referrer = await prisma.user.findUnique({
+              where: { referralCode: inviteCode }
+            });
+            if (referrer) {
+              referredById = referrer.id;
+              newBalance = 5.0; // R$ 5 bonus for the new user
+              
+              // Give bonus to referrer
+              await prisma.user.update({
+                where: { id: referrer.id },
+                data: { balance: { increment: 5.0 } }
+              });
+
+              // Log referral bonus for referrer
+              await prisma.balanceMovement.create({
+                data: {
+                  userId: referrer.id,
+                  amount: 5.0,
+                  type: "REFERRAL_BONUS",
+                  description: `Bônus por indicar novo usuário (${email})`
+                }
+              });
+            }
+          }
+
+          // Generate a unique 6-char referral code for the new user
+          const generateCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
+          let newReferralCode = generateCode();
+          let codeExists = await prisma.user.findUnique({ where: { referralCode: newReferralCode } });
+          while (codeExists) {
+            newReferralCode = generateCode();
+            codeExists = await prisma.user.findUnique({ where: { referralCode: newReferralCode } });
+          }
+
           const newUser = await prisma.user.create({
             data: {
               email: email as string,
               password: hashedPassword,
               name: (name as string) || "Novo Usuário",
+              referralCode: newReferralCode,
+              referredById: referredById,
+              balance: newBalance
             }
           });
+          
+          if (newBalance > 0) {
+            await prisma.balanceMovement.create({
+              data: {
+                userId: newUser.id,
+                amount: newBalance,
+                type: "REFERRAL_BONUS_NEW",
+                description: `Bônus por usar o código de convite: ${inviteCode}`
+              }
+            });
+          }
+
+          // Log user creation
+          const { logAction } = require('./lib/actionLogger');
+          logAction('INFO', {
+            userId: newUser.id,
+            action: 'USER_REGISTERED',
+            payload: { email: newUser.email, referredById }
+          });
+
           return newUser;
         }
 

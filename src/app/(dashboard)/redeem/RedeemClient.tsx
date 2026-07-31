@@ -5,6 +5,8 @@ import { useState } from "react";
 
 import { toast } from "sonner";
 
+import { redeemGift } from "./actions";
+
 export function RedeemClient() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -13,11 +15,19 @@ export function RedeemClient() {
   const handleRedeem = async () => {
     if (!code) return;
     setLoading(true);
-    // TODO: Implement actual redeem logic
-    setTimeout(() => {
-      setLoading(false);
-      toast.error("Sistema de resgate em desenvolvimento.");
-    }, 1000);
+    
+    const res = await redeemGift(code) as any;
+    
+    if (res.success) {
+      toast.success(res.message);
+      setCode("");
+      // Add to local history list for immediate feedback
+      setHistory(prev => [{ code, date: new Date(), amount: res.amount || 0 }, ...prev]);
+    } else {
+      toast.error(res.error);
+    }
+    
+    setLoading(false);
   };
 
   return (
