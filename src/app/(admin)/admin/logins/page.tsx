@@ -7,14 +7,34 @@ export default async function AdminLoginsPage() {
   const session = await auth();
   if (!session?.user) redirect("/");
 
-  const sessions = await prisma.deviceSession.findMany({
+  // Pega as sessões mais recentes e agrupa pelo usuário (Raio-X)
+  const recentSessions = await prisma.deviceSession.findMany({
     orderBy: { lastSeen: 'desc' },
+    take: 50,
     include: {
       user: {
-        select: { name: true, email: true, image: true }
+        include: {
+          transactions: {
+            take: 3,
+            orderBy: { date: 'desc' },
+            include: { product: true }
+          },
+          recharges: {
+            take: 3,
+            orderBy: { createdAt: 'desc' }
+          }
+        }
       }
     }
   });
 
-  return <LoginsClient sessions={sessions} currentUser={session.user} />;
+  // Remove usuários duplicados para mostrar apenas o raio-x único mais recente
+  const uniqueUsers = new Map();
+  for (const s of recentSessions) {
+    if (!uniqueUsers.has(s.userId)) {
+      uniqueUsers.set(s.userId, s);
+    }
+  }
+
+  return <LoginsClient sessions={Array.from(uniqueUsers.values())} currentUser={session.user} />;
 }

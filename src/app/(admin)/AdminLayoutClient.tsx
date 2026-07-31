@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, Bomb, Users, RefreshCw, Package, LogIn, ShoppingCart, 
   Repeat, ShieldCheck, BarChart, Ticket, Gift, MessageSquare, ArrowDownToLine, 
-  Headphones, Menu, X, PanelLeftClose, PanelLeftOpen, Settings, ChevronDown, ChevronRight
+  Headphones, Menu, X, PanelLeftClose, PanelLeftOpen, Settings, ChevronDown, ChevronRight, LineChart
 } from "lucide-react";
 
 const sidebarGroups = [
@@ -34,10 +34,9 @@ const sidebarGroups = [
     ]
   },
   {
-    title: "Ferramentas CC",
+    title: "ANALYTICS & INTELIGÊNCIA",
     items: [
-      { title: "Checar CC", href: "/admin/check-cc", icon: ShieldCheck, requiresAdmin: true },
-      { title: "Analytics CC", href: "/admin/check-cc/analytics", icon: BarChart, requiresAdmin: true },
+      { title: "Dashboard Geral", href: "/admin/analytics", icon: LineChart, requiresAdmin: false },
     ]
   },
   {
