@@ -23,6 +23,8 @@ model User {
   referralDiscount Float        @default(0.0)
   referralRewardGiven Boolean   @default(false)
   tokenVersion  Int             @default(1)
+  adminStatus   String          @default("OFFLINE")
+  adminLastActive DateTime?
   
   accounts      Account[]
   sessions      Session[]
@@ -31,6 +33,7 @@ model User {
   balanceLogs   BalanceMovement[]
   reviews       Review[]
   notifications Notification[]
+  adminLogs     AdminLog[]
   
   referredBy    User?           @relation("Referrals", fields: [referredById], references: [id])
   referredUsers User[]          @relation("Referrals")
@@ -302,4 +305,16 @@ model DropEventClaim {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([dropEventId, userId])
+}
+
+
+model AdminLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  details   String?  @db.Text
+  ip        String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

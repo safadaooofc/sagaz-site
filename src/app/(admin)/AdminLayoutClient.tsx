@@ -6,33 +6,78 @@ import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, Bomb, Users, RefreshCw, Package, LogIn, ShoppingCart, 
   Repeat, ShieldCheck, BarChart, Ticket, Gift, MessageSquare, ArrowDownToLine, 
-  Headphones, Menu, X, PanelLeftClose, PanelLeftOpen 
+  Headphones, Menu, X, PanelLeftClose, PanelLeftOpen, Settings, ChevronDown, ChevronRight
 } from "lucide-react";
 
-const sidebarLinks = [
-  { title: "Dashboard", href: "/admin", icon: LayoutDashboard, requiresAdmin: true },
-  { title: "Produtos e Estoque", href: "/admin/products", icon: Package, requiresAdmin: true },
-  { title: "Usuários e Cargos", href: "/admin/users", icon: Users, requiresAdmin: true },
-  { title: "Finanças e Extrato", href: "/admin/finance", icon: BarChart, requiresAdmin: true },
-  { title: "Cupons de Desconto", href: "/admin/coupons", icon: Ticket, requiresAdmin: true },
-  { title: "Gift Cards", href: "/admin/gifts", icon: Gift, requiresAdmin: true },
-  { title: "Avaliações", href: "/admin/reviews", icon: MessageSquare, requiresAdmin: true },
-  { title: "Marketing e Drops", href: "/admin/marketing", icon: Bomb, requiresAdmin: true },
-  { title: "Segurança", href: "/admin/security", icon: ShieldCheck, requiresAdmin: true },
-  { title: "Configurações", href: "/admin/settings", icon: Settings, requiresAdmin: true },
+const sidebarGroups = [
+  {
+    title: "Visão Geral",
+    items: [
+      { title: "Dashboard", href: "/admin", icon: LayoutDashboard, requiresAdmin: true },
+    ]
+  },
+  {
+    title: "Produtos & Ofertas",
+    items: [
+      { title: "Estoque e Produtos", href: "/admin/products", icon: Package, requiresAdmin: true },
+      { title: "Cupons de Desconto", href: "/admin/coupons", icon: Ticket, requiresAdmin: true },
+      { title: "Gift Cards", href: "/admin/gifts", icon: Gift, requiresAdmin: true },
+    ]
+  },
+  {
+    title: "Vendas & Finanças",
+    items: [
+      { title: "Recargas (Finanças)", href: "/admin/finance", icon: RefreshCw, requiresAdmin: true },
+      { title: "Compras", href: "/admin/purchases", icon: ShoppingCart, requiresAdmin: true },
+      { title: "Trocas", href: "/admin/exchanges", icon: Repeat, requiresAdmin: true },
+      { title: "Saques", href: "/admin/saques", icon: ArrowDownToLine, requiresAdmin: true },
+    ]
+  },
+  {
+    title: "Ferramentas CC",
+    items: [
+      { title: "Checar CC", href: "/admin/check-cc", icon: ShieldCheck, requiresAdmin: true },
+      { title: "Analytics CC", href: "/admin/check-cc/analytics", icon: BarChart, requiresAdmin: true },
+    ]
+  },
+  {
+    title: "Marketing & Engajamento",
+    items: [
+      { title: "Mines", href: "/admin/mines", icon: Bomb, requiresAdmin: true },
+      { title: "Drops", href: "/admin/marketing", icon: Gift, requiresAdmin: false },
+    ]
+  },
+  {
+    title: "Sistema & Atendimento",
+    items: [
+      { title: "Usuários", href: "/admin/users", icon: Users, requiresAdmin: true },
+      { title: "Logins", href: "/admin/logins", icon: LogIn, requiresAdmin: true },
+      { title: "Avaliações", href: "/admin/reviews", icon: MessageSquare, requiresAdmin: false },
+      { title: "Suporte", href: "/admin/suporte", icon: Headphones, requiresAdmin: false },
+      { title: "Segurança", href: "/admin/security", icon: ShieldCheck, requiresAdmin: true },
+      { title: "Configurações", href: "/admin/settings", icon: Settings, requiresAdmin: true },
+    ]
+  }
 ];
 
 export function AdminLayoutClient({ children, user }: { children: React.ReactNode, user: any }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const saved = localStorage.getItem("admin-sidebar-collapsed");
     if (saved !== null) {
       setIsCollapsed(JSON.parse(saved));
     }
-  }, []);
+    
+    // Auto-open group that contains active link
+    const currentGroup = sidebarGroups.find(g => g.items.some(i => i.href === pathname));
+    if (currentGroup) {
+      setOpenGroups(prev => ({ ...prev, [currentGroup.title]: true }));
+    }
+  }, [pathname]);
 
   const toggleCollapse = () => {
     const newVal = !isCollapsed;
@@ -40,13 +85,73 @@ export function AdminLayoutClient({ children, user }: { children: React.ReactNod
     localStorage.setItem("admin-sidebar-collapsed", JSON.stringify(newVal));
   };
 
+  const toggleGroup = (title: string) => {
+    if (isCollapsed) setIsCollapsed(false); // uncollapse if clicking group header while collapsed
+    setOpenGroups(prev => ({ ...prev, [title]: !prev[title] }));
+  };
+
   const isSupportOnly = user?.isSupporter && !user?.isAdmin;
-  const filteredLinks = sidebarLinks.filter(l => {
-    if (isSupportOnly && l.requiresAdmin) return false;
-    return true;
-  });
+  
+  // Filter groups based on permissions
+  const filteredGroups = sidebarGroups.map(group => ({
+    ...group,
+    items: group.items.filter(l => !(isSupportOnly && l.requiresAdmin))
+  })).filter(group => group.items.length > 0);
 
   const isSupportRoute = pathname === "/admin/suporte";
+
+  // Flat list of links for finding active link title
+  const allFilteredLinks = filteredGroups.flatMap(g => g.items);
+
+  const renderNavItems = () => {
+    return filteredGroups.map((group, idx) => {
+      const isOpen = openGroups[group.title] || false;
+      const isFirst = idx === 0;
+
+      return (
+        <div key={group.title} className={!isFirst ? "mt-4" : ""}>
+          {!isCollapsed ? (
+            <button 
+              onClick={() => toggleGroup(group.title)}
+              className="w-full flex items-center justify-between px-3 py-1 text-xs font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
+            >
+              <span>{group.title}</span>
+              {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </button>
+          ) : (
+            <div className="px-3 py-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider text-center border-b border-border mb-2 pb-1">
+              {group.title.substring(0, 3)}
+            </div>
+          )}
+          
+          {(isOpen || isCollapsed) && (
+            <div className="mt-1 space-y-1">
+              {group.items.map(link => {
+                const Icon = link.icon;
+                const isActive = pathname === link.href;
+                return (
+                  <Link 
+                    key={link.href} 
+                    href={link.href}
+                    title={isCollapsed ? link.title : undefined}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center ${isCollapsed ? "justify-center px-0" : "px-3"} py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive 
+                        ? "bg-primary/10 text-primary" 
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    }`}
+                  >
+                    <Icon size={18} className={!isCollapsed ? "mr-3" : ""} />
+                    {!isCollapsed && <span>{link.title}</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
 
   return (
     <div className={`flex flex-col font-sans bg-background text-foreground ${isSupportRoute ? "h-screen" : "min-h-screen"}`}>
@@ -61,28 +166,8 @@ export function AdminLayoutClient({ children, user }: { children: React.ReactNod
             </button>
           </div>
           
-          <div className="flex-1 overflow-y-auto py-4 custom-scrollbar">
-            <nav className="space-y-1 px-2">
-              {filteredLinks.map(link => {
-                const Icon = link.icon;
-                const isActive = pathname === link.href;
-                return (
-                  <Link 
-                    key={link.href} 
-                    href={link.href}
-                    title={isCollapsed ? link.title : undefined}
-                    className={`flex items-center ${isCollapsed ? "justify-center px-0" : "px-3"} py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                      isActive 
-                        ? "bg-primary/10 text-primary" 
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                    }`}
-                  >
-                    <Icon size={18} className={!isCollapsed ? "mr-3" : ""} />
-                    {!isCollapsed && <span>{link.title}</span>}
-                  </Link>
-                );
-              })}
-            </nav>
+          <div className="flex-1 overflow-y-auto py-4 px-2 custom-scrollbar">
+            {renderNavItems()}
           </div>
         </aside>
 
@@ -97,28 +182,8 @@ export function AdminLayoutClient({ children, user }: { children: React.ReactNod
                   <X size={20} />
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto py-4">
-                <nav className="space-y-1 px-3">
-                  {filteredLinks.map(link => {
-                    const Icon = link.icon;
-                    const isActive = pathname === link.href;
-                    return (
-                      <Link 
-                        key={link.href} 
-                        href={link.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
-                          isActive 
-                            ? "bg-primary/10 text-primary" 
-                            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                        }`}
-                      >
-                        <Icon size={18} className="mr-3" />
-                        {link.title}
-                      </Link>
-                    );
-                  })}
-                </nav>
+              <div className="flex-1 overflow-y-auto py-4 px-3">
+                {renderNavItems()}
               </div>
             </aside>
           </div>
@@ -131,7 +196,7 @@ export function AdminLayoutClient({ children, user }: { children: React.ReactNod
               <Menu size={20} /> <span className="font-medium text-sm">Menu</span>
             </button>
             <div className="font-semibold text-sm text-foreground">
-              {filteredLinks.find(l => l.href === pathname)?.title || "Admin"}
+              {allFilteredLinks.find(l => l.href === pathname)?.title || "Admin"}
             </div>
           </div>
           
