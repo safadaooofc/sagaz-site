@@ -41,7 +41,7 @@ export function UserMenu({ user, variant = "topbar" }: UserMenuProps) {
           ? "flex items-center gap-3 w-full text-left focus:outline-none hover:bg-[#181a20] p-2 -mx-2 rounded-lg transition-colors"
           : "w-10 h-10 rounded-full bg-[#181a20] border border-[#262933] flex items-center justify-center overflow-hidden hover:border-[#4b5563] transition-colors focus:outline-none"}
       >
-        <div className={variant === "sidebar" ? "w-10 h-10 shrink-0 rounded-full bg-[#181a20] border border-[#1f2229] flex items-center justify-center overflow-hidden" : "w-full h-full"}>
+        <div className={variant === "sidebar" ? "w-10 h-10 shrink-0 rounded-full bg-[#181a20] border border-[#1f2229] flex items-center justify-center overflow-hidden" : "w-full h-full flex items-center justify-center"}>
           {user?.image ? (
             <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
