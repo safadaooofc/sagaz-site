@@ -8,7 +8,7 @@ export default async function AdminCouponsPage() {
   if (!session?.user) redirect("/");
 
   // Fetch only DISCOUNT type
-  const coupons = await prisma.rewardCode.findMany({
+  const coupons = await (prisma as any).rewardCode.findMany({
     where: { type: 'DISCOUNT' },
     orderBy: { createdAt: 'desc' },
     include: {
