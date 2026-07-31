@@ -6,7 +6,7 @@ import { logAdminAction } from "@/lib/adminLogger";
 
 export async function updateAdminStatus(userId: string, status: "TRABALHANDO" | "REPOUSO" | "OFFLINE") {
   try {
-    await prisma.user.update({
+    await (prisma as any).user.update({
       where: { id: userId },
       data: { 
         adminStatus: status,
