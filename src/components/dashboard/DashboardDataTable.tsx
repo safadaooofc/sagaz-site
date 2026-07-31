@@ -2,6 +2,7 @@
 
 import { Search, Eye, ChevronLeft, ChevronRight, Copy, X } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
+import { toast } from "sonner";
 
 type PurchasedCard = {
   number?: string;
@@ -115,7 +116,7 @@ export function DashboardDataTable({ transactions }: { transactions: Transaction
 
       if (action === "copy") {
         await navigator.clipboard.writeText(rawText);
-        alert("Copiado para a área de transferência!");
+        toast.success("Copiado para a área de transferência!");
       } else if (action === "download-txt") {
         let content = "";
         if (purchase.type === "card") {

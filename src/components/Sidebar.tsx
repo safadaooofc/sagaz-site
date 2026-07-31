@@ -83,8 +83,9 @@ export function Sidebar({ user }: { user?: any }) {
       </div>
 
       <div className="p-4 space-y-3">
-        <a href="https://discord.gg/seu-link-aqui" target="_blank" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
-          <MessageSquare size={16} /> Entrar no Discord
+        <a href="https://discord.gg/sagaz" target="_blank" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
+          <MessageSquare size={18} />
+          Juntar-se ao Discord
         </a>
         <div className="mt-4 pt-4 border-t border-[#1f2229]">
           <UserMenu user={user} variant="sidebar" />

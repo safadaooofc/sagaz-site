@@ -21,8 +21,11 @@ export async function revokeAllSessions(targetUserId: string) {
       data: { tokenVersion: { increment: 1 } }
     });
 
-    // Remove todos os registros de dispositivo
+    // Remove todos os registros de dispositivo e sessões web
     await prisma.deviceSession.deleteMany({
+      where: { userId: targetUserId }
+    });
+    await prisma.session.deleteMany({
       where: { userId: targetUserId }
     });
 

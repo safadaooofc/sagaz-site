@@ -169,7 +169,7 @@ export function FaqContent({ isPublic = false }: { isPublic?: boolean }) {
         <h3 className="font-bold text-white text-[15px] mb-2">Aprovou? Envie suas avaliações!</h3>
         <p className="text-[13px] text-[#9ca3af] mb-4">Precisa de ajuda? Use os canais oficiais no Discord</p>
         <div className="flex justify-center gap-4">
-          <a href="#" className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-[13px] px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2">
+          <a href="https://discord.gg/sagaz" target="_blank" className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-[13px] px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2">
             <MessageSquare size={16} /> Discord
           </a>
         </div>
