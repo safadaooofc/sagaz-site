@@ -11,21 +11,15 @@ import {
 
 const sidebarLinks = [
   { title: "Dashboard", href: "/admin", icon: LayoutDashboard, requiresAdmin: true },
-  { title: "Mines", href: "/admin/mines", icon: Bomb, requiresAdmin: true },
-  { title: "Usuários", href: "/admin/users", icon: Users, requiresAdmin: true },
-  { title: "Recargas", href: "/admin/recharges", icon: RefreshCw, requiresAdmin: true },
-  { title: "Estoque", href: "/admin/stock", icon: Package, requiresAdmin: true },
-  { title: "Logins", href: "/admin/logins", icon: LogIn, requiresAdmin: true },
-  { title: "Compras", href: "/admin/purchases", icon: ShoppingCart, requiresAdmin: true },
-  { title: "Trocas", href: "/admin/exchanges", icon: Repeat, requiresAdmin: true },
-  { title: "Checar CC", href: "/admin/check-cc", icon: ShieldCheck, requiresAdmin: true },
-  { title: "Analytics CC", href: "/admin/check-cc/analytics", icon: BarChart, requiresAdmin: true },
-  { title: "Cupons", href: "/admin/cupons", icon: Ticket, requiresAdmin: true },
-  { title: "Gifts", href: "/admin/gifts", icon: Gift, requiresAdmin: true },
-  { title: "Drops", href: "/admin/drops", icon: Gift, requiresAdmin: false },
-  { title: "Feedbacks", href: "/admin/feedbacks", icon: MessageSquare, requiresAdmin: false },
-  { title: "Saques", href: "/admin/saques", icon: ArrowDownToLine, requiresAdmin: true },
-  { title: "Suporte", href: "/admin/suporte", icon: Headphones, requiresAdmin: false },
+  { title: "Produtos e Estoque", href: "/admin/products", icon: Package, requiresAdmin: true },
+  { title: "Usuários e Cargos", href: "/admin/users", icon: Users, requiresAdmin: true },
+  { title: "Finanças e Extrato", href: "/admin/finance", icon: BarChart, requiresAdmin: true },
+  { title: "Cupons de Desconto", href: "/admin/coupons", icon: Ticket, requiresAdmin: true },
+  { title: "Gift Cards", href: "/admin/gifts", icon: Gift, requiresAdmin: true },
+  { title: "Avaliações", href: "/admin/reviews", icon: MessageSquare, requiresAdmin: true },
+  { title: "Marketing e Drops", href: "/admin/marketing", icon: Bomb, requiresAdmin: true },
+  { title: "Segurança", href: "/admin/security", icon: ShieldCheck, requiresAdmin: true },
+  { title: "Configurações", href: "/admin/settings", icon: Settings, requiresAdmin: true },
 ];
 
 export function AdminLayoutClient({ children, user }: { children: React.ReactNode, user: any }) {
