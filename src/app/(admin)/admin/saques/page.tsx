@@ -1,8 +1,20 @@
-export default function DummyPage() {
-  return (
-    <div className="p-8 text-center text-[#9ca3af]">
-      <h1 className="text-2xl font-bold text-white mb-2">Em Breve</h1>
-      <p>Esta página ainda está em construção e não possui funções.</p>
-    </div>
-  );
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { SaquesClient } from "./SaquesClient";
+import { redirect } from "next/navigation";
+
+export default async function AdminSaquesPage() {
+  const session = await auth();
+  if (!session?.user) redirect("/");
+
+  const withdrawals = await prisma.withdrawal.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: {
+      user: {
+        select: { name: true, email: true }
+      }
+    }
+  });
+
+  return <SaquesClient withdrawals={withdrawals} />;
 }
