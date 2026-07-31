@@ -42,6 +42,10 @@ model User {
   referredUsers User[]          @relation("Referrals")
   dropEventClaims DropEventClaim[]
   recharges     Recharge[]
+  minesGames    MinesGame[]
+  tickets       Ticket[]
+  ticketMessages TicketMessage[]
+  exchangeRequests ExchangeRequest[]
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -361,4 +365,55 @@ model RewardUsageLog {
 
   rewardCode   RewardCode @relation(fields: [rewardCodeId], references: [id], onDelete: Cascade)
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MinesGame {
+  id          String   @id @default(cuid())
+  userId      String
+  betAmount   Float
+  multiplier  Float    @default(1.0)
+  bombsCount  Int
+  boardData   String   @db.Text
+  status      String   @default("PLAYING") // PLAYING, CASHOUT, BUST
+  profit      Float    @default(0.0)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Ticket {
+  id          String   @id @default(cuid())
+  userId      String
+  subject     String
+  status      String   @default("OPEN") // OPEN, CLOSED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages    TicketMessage[]
+}
+
+model TicketMessage {
+  id          String   @id @default(cuid())
+  ticketId    String
+  senderId    String
+  content     String   @db.Text
+  isAdmin     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  ticket      Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  sender      User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model ExchangeRequest {
+  id           String   @id @default(cuid())
+  userId       String
+  giftCardCode String
+  requestedValue Float
+  status       String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  adminNotes   String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

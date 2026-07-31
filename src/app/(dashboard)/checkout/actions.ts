@@ -33,7 +33,8 @@ export async function processPurchase(productId: string, quantity: number, coupo
 
       // 3. Process Coupon if provided
       if (couponCode) {
-        const coupon = await tx.rewardCode.findUnique({ where: { code: couponCode } });
+        const rewardData = await (tx as any).rewardCode.findUnique({ where: { code: couponCode } });
+        const coupon = rewardData;
         if (!coupon || !coupon.active || coupon.type !== 'DISCOUNT') {
           throw new Error("Cupom inválido ou inativo");
         }
@@ -93,11 +94,11 @@ export async function processPurchase(productId: string, quantity: number, coupo
 
       // 8. Update Coupon Usage
       if (appliedCoupon) {
-        await tx.rewardCode.update({
+        await (tx as any).rewardCode.update({
           where: { id: appliedCoupon.id },
-          data: { used: { increment: 1 } }
+          data: { uses: { increment: 1 } }
         });
-        await tx.rewardUsageLog.create({
+        await (tx as any).rewardUsageLog.create({
           data: {
             userId: user.id,
             rewardCodeId: appliedCoupon.id
@@ -122,7 +123,7 @@ export async function processPurchase(productId: string, quantity: number, coupo
     });
   } catch (error: any) {
     logAction("ERROR", {
-      userId: session.user.id,
+      userId: session.user.id as string,
       action: "PROCESS_PURCHASE_FAILED",
       error: error.message
     });

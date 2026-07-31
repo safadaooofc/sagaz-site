@@ -1,8 +1,23 @@
-export default function DummyPage() {
-  return (
-    <div className="p-8 text-center text-[#9ca3af]">
-      <h1 className="text-2xl font-bold text-white mb-2">Em Breve</h1>
-      <p>Esta página ainda está em construção e não possui funções.</p>
-    </div>
-  );
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { AdminSuporteClient } from "./AdminSuporteClient";
+import { prisma } from "@/lib/prisma";
+
+export default async function AdminSuportePage() {
+  const session = await auth();
+  if (!session?.user || ((session.user as any).role !== "ADMIN" && (session.user as any).role !== "SUPERADMIN")) {
+    redirect("/");
+  }
+
+  const tickets = await (prisma as any).ticket.findMany({
+    orderBy: { updatedAt: "desc" },
+    include: {
+      user: { select: { name: true, email: true, id: true } },
+      messages: {
+        orderBy: { createdAt: "asc" }
+      }
+    }
+  });
+
+  return <AdminSuporteClient initialTickets={tickets} />;
 }

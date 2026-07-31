@@ -13,12 +13,12 @@ export default async function AdminDashboardPage() {
       where: { status: "COMPLETED" },
       _sum: { total: true }
     }),
-    prisma.adminLog.findMany({
+    (prisma as any).adminLog.findMany({
       take: 20,
       orderBy: { createdAt: 'desc' },
       include: { user: { select: { name: true, image: true, role: true } } }
     }),
-    prisma.user.findMany({
+    (prisma as any).user.findMany({
       where: { role: { in: ["SUPERADMIN", "ADMIN", "MODERATOR", "OWNER"] } },
       select: { id: true, name: true, image: true, role: true, adminStatus: true, adminLastActive: true },
       orderBy: { adminStatus: 'asc' }

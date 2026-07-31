@@ -1,17 +1,37 @@
 "use client";
 
-import { Bomb, Play, StopCircle, Settings } from "lucide-react";
+import { Bomb, Play, StopCircle, Settings, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { saveMinesConfig } from "./actions";
 
-export function MinesClient() {
-  const [isActive, setIsActive] = useState(false);
-  const [multiplier, setMultiplier] = useState("1.5");
-  const [maxBet, setMaxBet] = useState("100");
+export function MinesClient({ initialConfig }: { initialConfig: any }) {
+  const [isActive, setIsActive] = useState(initialConfig.isActive);
+  const [multiplier, setMultiplier] = useState(initialConfig.multiplier);
+  const [maxBet, setMaxBet] = useState(initialConfig.maxBet);
+  const [saving, setSaving] = useState(false);
 
-  const toggleEvent = () => {
-    setIsActive(!isActive);
-    toast.success(isActive ? "Evento do Mines Desativado!" : "Evento do Mines Iniciado!");
+  const toggleEvent = async () => {
+    const nextState = !isActive;
+    setIsActive(nextState);
+    const res = await saveMinesConfig(nextState, multiplier, maxBet);
+    if (res.success) {
+      toast.success(nextState ? "Evento do Mines Iniciado!" : "Evento do Mines Desativado!");
+    } else {
+      setIsActive(!nextState); // rollback
+      toast.error(res.error || "Erro ao salvar.");
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    const res = await saveMinesConfig(isActive, multiplier, maxBet);
+    if (res.success) {
+      toast.success("Configurações salvas!");
+    } else {
+      toast.error(res.error || "Erro ao salvar.");
+    }
+    setSaving(false);
   };
 
   return (
@@ -41,9 +61,10 @@ export function MinesClient() {
           
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-[#9ca3af] uppercase mb-1">Multiplicador Base (x)</label>
+              <label className="block text-xs font-bold text-[#9ca3af] uppercase mb-1">Multiplicador Base (x) (1 Bomba)</label>
               <input 
                 type="number" 
+                step="0.1"
                 value={multiplier}
                 onChange={e => setMultiplier(e.target.value)}
                 className="w-full bg-[#0f1115] border border-[#262933] rounded-lg px-4 py-3 text-white outline-none focus:border-red-500"
@@ -58,8 +79,8 @@ export function MinesClient() {
                 className="w-full bg-[#0f1115] border border-[#262933] rounded-lg px-4 py-3 text-white outline-none focus:border-red-500"
               />
             </div>
-            <button className="w-full bg-[#262933] hover:bg-[#374151] text-white font-bold py-3 rounded-lg transition-colors">
-              Salvar Configurações
+            <button onClick={handleSave} disabled={saving} className="w-full flex items-center justify-center gap-2 bg-[#262933] hover:bg-[#374151] text-white font-bold py-3 rounded-lg transition-colors">
+              {saving ? <Loader2 className="animate-spin" size={20}/> : "Salvar Configurações"}
             </button>
           </div>
         </div>

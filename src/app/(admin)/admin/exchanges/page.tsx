@@ -1,8 +1,20 @@
-export default function DummyPage() {
-  return (
-    <div className="p-8 text-center text-[#9ca3af]">
-      <h1 className="text-2xl font-bold text-white mb-2">Em Breve</h1>
-      <p>Esta página ainda está em construção e não possui funções.</p>
-    </div>
-  );
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { AdminExchangesClient } from "./AdminExchangesClient";
+import { prisma } from "@/lib/prisma";
+
+export default async function AdminExchangesPage() {
+  const session = await auth();
+  if (!session?.user || ((session.user as any).role !== "ADMIN" && (session.user as any).role !== "SUPERADMIN")) {
+    redirect("/");
+  }
+
+  const requests = await (prisma as any).exchangeRequest.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      user: { select: { name: true, email: true, id: true } }
+    }
+  });
+
+  return <AdminExchangesClient initialRequests={requests} />;
 }

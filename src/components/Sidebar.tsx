@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Wallet, CreditCard, Key, Users, Gift, Star, Settings, HelpCircle, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Wallet, CreditCard, Key, Users, Gift, Star, Settings, HelpCircle, MessageSquare, Bomb } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
 export function Sidebar({ user }: { user?: any }) {
@@ -53,8 +53,10 @@ export function Sidebar({ user }: { user?: any }) {
               Indicação
             </Link>
             <Link href="/drops" className={getLinkClass("/drops")}>
-              <Gift size={16} />
-              Drops
+              <Gift size={20} className={pathname.includes('/drops') ? 'text-[#eab308]' : 'text-[#6b7280]'} /> Drops
+            </Link>
+            <Link href="/mines" className={getLinkClass("/mines")}>
+              <Bomb size={20} className={pathname.includes('/mines') ? 'text-red-500' : 'text-[#6b7280]'} /> Mines
             </Link>
             <Link href="/reviews" className={getLinkClass("/reviews")}>
               <Star size={16} />
@@ -77,6 +79,14 @@ export function Sidebar({ user }: { user?: any }) {
             <Link href="/faq" className={getLinkClass("/faq")}>
               <HelpCircle size={16} />
               Dúvidas e termos
+            </Link>
+            <Link href="/suporte" className={getLinkClass("/suporte")}>
+              <MessageSquare size={16} />
+              Suporte
+            </Link>
+            <Link href="/exchanges" className={getLinkClass("/exchanges")}>
+              <RefreshCw size={16} />
+              Trocas
             </Link>
           </nav>
         </div>

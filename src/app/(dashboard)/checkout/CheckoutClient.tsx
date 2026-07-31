@@ -33,7 +33,7 @@ export function CheckoutClient({ product, quantity, type, balance }: { product: 
 
     setIsProcessing(true);
     
-    const res = await processPurchase(product.id, quantity, couponCode || undefined);
+    const res = await processPurchase(product.id, quantity, couponCode || undefined) as any;
     
     if (res.success) {
       toast.success("Compra aprovada! Produto entregue.");
