@@ -12,6 +12,7 @@ interface UserMenuProps {
     image?: string | null;
     role?: string;
   };
+  variant?: "topbar" | "sidebar";
 }
 
 export function UserMenu({ user, variant = "topbar" }: UserMenuProps) {
