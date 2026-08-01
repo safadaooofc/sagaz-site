@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Wallet, CreditCard, Key, Users, Gift, Star, Settings, HelpCircle, MessageSquare, Bomb } from "lucide-react";
+import { LayoutDashboard, Wallet, CreditCard, Key, Users, Gift, Star, Settings, HelpCircle, MessageSquare, Bomb, RefreshCw } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
 export function Sidebar({ user }: { user?: any }) {

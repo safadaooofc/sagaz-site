@@ -12,7 +12,7 @@ export async function processPurchase(productId: string, quantity: number, coupo
   try {
     return await prisma.$transaction(async (tx) => {
       // 1. Get user & balance
-      const user = await tx.user.findUnique({ where: { id: session.user.id } });
+      const user = await tx.user.findUnique({ where: { id: session!.user!.id as string } });
       if (!user) throw new Error("Usuário não encontrado");
 
       // 2. Get product & available stock
