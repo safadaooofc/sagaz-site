@@ -7,6 +7,23 @@ import {
 } from "recharts";
 import { Activity, DollarSign, Users, MessageSquare, TrendingUp, AlertTriangle } from "lucide-react";
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-[#0f1115]/90 border border-cyan-500/30 p-3 rounded-lg backdrop-blur-md shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+        <p className="text-cyan-400 font-bold mb-1">{label}</p>
+        {payload.map((p: any, i: number) => (
+          <p key={i} className="text-white text-sm">
+            <span style={{color: p.color}}>{p.name}: </span>
+            <span className="font-mono">{p.name === 'receita' ? `R$ ${p.value.toFixed(2)}` : p.value}</span>
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
 export function AnalyticsClient() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -24,22 +41,6 @@ export function AnalyticsClient() {
     </div>;
   }
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-[#0f1115]/90 border border-cyan-500/30 p-3 rounded-lg backdrop-blur-md shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-          <p className="text-cyan-400 font-bold mb-1">{label}</p>
-          {payload.map((p: any, i: number) => (
-            <p key={i} className="text-white text-sm">
-              <span style={{color: p.color}}>{p.name}: </span>
-              <span className="font-mono">{p.name === 'receita' ? `R$ ${p.value.toFixed(2)}` : p.value}</span>
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="font-sans space-y-6">

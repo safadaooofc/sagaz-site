@@ -2,7 +2,22 @@
 
 import { useMemo, useState } from "react";
 import { Ticket, Percent, Plus, ShieldBan, CheckCircle, Trash2, TrendingUp, Users } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar 
+} from "recharts";
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-[#181a20] border border-[#262933] p-3 rounded-lg shadow-xl">
+        <p className="text-white font-bold mb-2">{label}</p>
+        <p className="text-sm text-fuchsia-400">Usos: {payload[0].value}</p>
+      </div>
+    );
+  }
+  return null;
+};
+
 import { deleteRewardCode, toggleRewardCodeActive } from "../marketing/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -59,17 +74,6 @@ export function CouponsClient({ coupons }: { coupons: any[] }) {
     else toast.error(res.error);
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-[#181a20] border border-[#262933] p-3 rounded-lg shadow-xl">
-          <p className="text-white font-bold mb-2">{label}</p>
-          <p className="text-sm text-fuchsia-400">Usos: {payload[0].value}</p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="font-sans">
