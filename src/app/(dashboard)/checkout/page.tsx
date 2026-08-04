@@ -3,11 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { CheckoutClient } from "./CheckoutClient";
 
-export default async function CheckoutPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
+export default async function CheckoutPage(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const searchParams = await props.searchParams;
   const session = await auth();
   if (!session?.user) redirect("/");
 
