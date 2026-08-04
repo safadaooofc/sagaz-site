@@ -49,11 +49,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (user.twoFactorMethod === "APP") {
           // Verify with otplib
-          const { authenticator } = require("otplib");
+          const { verifySync } = require("otplib");
           if (!user.twoFactorSecret) throw new Error("2FA não configurado corretamente");
           
-          const isValidOTP = authenticator.verify({ token: code as string, secret: user.twoFactorSecret });
-          if (!isValidOTP) throw new Error("Código Authenticator inválido");
+          const { valid } = verifySync({ token: code as string, secret: user.twoFactorSecret });
+          if (!valid) throw new Error("Código Authenticator inválido");
           
           return user;
         }

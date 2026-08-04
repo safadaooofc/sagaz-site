@@ -26,19 +26,23 @@ export function MarketingClient({ rewardCodes, products }: { rewardCodes: any[],
       return;
     }
     
-    if (type !== "PRODUCT" && !value) {
-      toast.error("Informe o valor/porcentagem!");
-      setIsLoading(false);
-      return;
+    if (type !== "PRODUCT") {
+      if (!value || isNaN(parseFloat(value))) {
+        toast.error("Informe um valor numérico válido!");
+        setIsLoading(false);
+        return;
+      }
     }
 
-    const res = await createRewardCode({
+    const payload = {
       code: code.trim().toUpperCase(),
       type,
       value: type !== "PRODUCT" ? parseFloat(value) : undefined,
       productId: type === "PRODUCT" ? productId : undefined,
-      maxUses: parseInt(maxUses)
-    });
+      maxUses: parseInt(maxUses) || 1
+    };
+
+    const res = await createRewardCode(payload);
 
     if (res.success) {
       toast.success("Recompensa suprema criada com sucesso!");
