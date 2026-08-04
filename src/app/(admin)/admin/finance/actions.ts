@@ -33,7 +33,7 @@ export async function approveRecharge(rechargeId: string) {
       });
     });
 
-    await logAdminAction(session.user.id, "Aprovou Recarga", `Recarga: ${recharge.id} | Valor: R$ ${recharge.totalAmount}`);
+    await logAdminAction(session.user.id as string, "Aprovou Recarga", `Recarga: ${recharge.id} | Valor: R$ ${recharge.totalAmount}`);
     revalidatePath("/admin/finance");
     return { success: true };
   } catch (error: any) {
@@ -51,7 +51,7 @@ export async function rejectRecharge(rechargeId: string) {
       data: { status: "failed" }
     });
 
-    await logAdminAction(session.user.id, "Rejeitou Recarga", `Recarga: ${rechargeId}`);
+    await logAdminAction(session.user.id as string, "Rejeitou Recarga", `Recarga: ${rechargeId}`);
     revalidatePath("/admin/finance");
     return { success: true };
   } catch (error: any) {

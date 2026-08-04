@@ -8,7 +8,7 @@ import {
 import { toast } from "sonner";
 import { createTicket, replyTicket } from "./actions";
 
-export function SuporteClient({ initialTickets }: { initialTickets: any[] }) {
+export function SuporteClient({ initialTickets, purchases = [] }: { initialTickets: any[], purchases?: any[] }) {
   const [tickets, setTickets] = useState(initialTickets);
   const [activeTicket, setActiveTicket] = useState<any | null>(initialTickets[0] || null);
   
@@ -21,9 +21,10 @@ export function SuporteClient({ initialTickets }: { initialTickets: any[] }) {
   const [message, setMessage] = useState("");
 
   // Exchange Ticket State
-  const [productName, setProductName] = useState("");
+  const [selectedPurchaseId, setSelectedPurchaseId] = useState("");
   const [videoLink, setVideoLink] = useState("");
   const [exchangeReason, setExchangeReason] = useState("");
+  const [purchaseWarning, setPurchaseWarning] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -33,9 +34,10 @@ export function SuporteClient({ initialTickets }: { initialTickets: any[] }) {
   const resetForm = () => {
     setSubject("");
     setMessage("");
-    setProductName("");
+    setSelectedPurchaseId("");
     setVideoLink("");
     setExchangeReason("");
+    setPurchaseWarning(null);
     setAcceptedTerms(false);
     setTicketCategory(null);
   };
@@ -53,8 +55,16 @@ export function SuporteClient({ initialTickets }: { initialTickets: any[] }) {
         setLoading(false);
         return;
       }
-      finalSubject = `[TROCA] ${productName}`;
-      finalMessage = `**Produto:** ${productName}\n**Link do Vídeo (Google Pay):** ${videoLink}\n\n**Motivo relatado:**\n${exchangeReason}`;
+      if (!selectedPurchaseId) {
+        toast.error("Selecione um produto para troca.");
+        setLoading(false);
+        return;
+      }
+      const p = purchases.find(p => p.id === selectedPurchaseId);
+      const pName = p ? p.product?.name || "Produto Desconhecido" : "Produto Desconhecido";
+      
+      finalSubject = `[TROCA] ${pName}`;
+      finalMessage = `**Produto:** ${pName} (ID: ${selectedPurchaseId})\n**Comprado em:** ${p ? new Date(p.date).toLocaleString() : 'N/A'}\n**Link do Vídeo (Google Pay):** ${videoLink}\n\n**Motivo relatado:**\n${exchangeReason}`;
     }
 
     const res = await createTicket(finalSubject, finalMessage);
@@ -272,15 +282,37 @@ export function SuporteClient({ initialTickets }: { initialTickets: any[] }) {
                     <form onSubmit={handleCreate} className="space-y-5 bg-[#13151a] p-6 rounded-2xl border border-[#262933]">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                          <label className="block text-sm font-bold text-[#9ca3af] mb-2">ID do Pedido / Info do Cartão</label>
-                          <input 
-                            type="text" 
-                            value={productName}
-                            onChange={e => setProductName(e.target.value)}
+                          <label className="block text-sm font-bold text-[#9ca3af] mb-2">Produto Comprado</label>
+                          <select 
+                            value={selectedPurchaseId}
+                            onChange={e => {
+                              const id = e.target.value;
+                              setSelectedPurchaseId(id);
+                              
+                              if (id) {
+                                const p = purchases.find(p => p.id === id);
+                                if (p) {
+                                  const diffMinutes = (Date.now() - new Date(p.date).getTime()) / 60000;
+                                  if (diffMinutes > 10) {
+                                    setPurchaseWarning("Atenção: Este produto foi comprado há mais de 10 minutos. O prazo de garantia expirou e a troca poderá ser negada automaticamente.");
+                                  } else {
+                                    setPurchaseWarning(null);
+                                  }
+                                }
+                              } else {
+                                setPurchaseWarning(null);
+                              }
+                            }}
                             required={acceptedTerms}
-                            placeholder="Ex: Pedido #992 ou 4000 00..."
                             className="w-full bg-[#0a0c10] border border-[#262933] rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500 transition-colors"
-                          />
+                          >
+                            <option value="">Selecione um produto entregue</option>
+                            {purchases.map((p) => (
+                              <option key={p.id} value={p.id}>
+                                {p.product?.name} - {new Date(p.date).toLocaleDateString()} {new Date(p.date).toLocaleTimeString()}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                         <div>
                           <label className="block text-sm font-bold text-[#9ca3af] mb-2">Link do Vídeo (Obrigatório)</label>
@@ -305,8 +337,16 @@ export function SuporteClient({ initialTickets }: { initialTickets: any[] }) {
                           className="w-full bg-[#0a0c10] border border-[#262933] rounded-xl px-4 py-3 text-white outline-none focus:border-purple-500 resize-none transition-colors"
                         ></textarea>
                       </div>
-                      <div className="pt-2">
-                        <button type="submit" disabled={loading} className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg">
+
+                      {purchaseWarning && (
+                        <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 p-4 rounded-xl flex items-start gap-3 mt-4">
+                          <AlertTriangle className="shrink-0 mt-0.5" size={18} />
+                          <p className="text-sm">{purchaseWarning}</p>
+                        </div>
+                      )}
+
+                      <div className="flex gap-4 pt-4">
+                        <button type="submit" disabled={loading} className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-3 rounded-xl flex items-center justify-center gap-2 transition-colors flex-1 shadow-lg">
                           {loading ? <Loader2 className="animate-spin" /> : "Enviar Solicitação de Troca"}
                         </button>
                       </div>

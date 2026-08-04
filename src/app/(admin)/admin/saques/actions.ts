@@ -36,7 +36,7 @@ export async function processWithdrawal(withdrawalId: string, status: "COMPLETED
       }
     });
 
-    await logAdminAction(session.user.id, `Saque ${status === "COMPLETED" ? "Pago" : "Rejeitado"}`, `Saque: ${withdrawal.id} | Valor: R$ ${withdrawal.amount}`);
+    await logAdminAction(session.user.id as string, `Saque ${status === "COMPLETED" ? "Pago" : "Rejeitado"}`, `Saque: ${withdrawal.id} | Valor: R$ ${withdrawal.amount}`);
     revalidatePath("/admin/saques");
     return { success: true };
   } catch (error: any) {

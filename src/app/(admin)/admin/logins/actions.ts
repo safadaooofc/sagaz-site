@@ -8,7 +8,8 @@ import { auth } from "@/auth";
 export async function revokeAllSessions(targetUserId: string) {
   try {
     const session = await auth();
-    if (!session?.user || session.user.role !== "OWNER") {
+    const userRole = (session?.user as any)?.role;
+    if (!session?.user || userRole !== "OWNER") {
       return { success: false, error: "Sem permissão." };
     }
 
@@ -29,7 +30,7 @@ export async function revokeAllSessions(targetUserId: string) {
       where: { userId: targetUserId }
     });
 
-    await logAdminAction(session.user.id, "Revogou Sessões", `Desconectou todos os dispositivos de ${targetUser.name || targetUser.email}`);
+    await logAdminAction(session.user.id as string, "Revogou Sessões", `Desconectou todos os dispositivos do usuário ${targetUserId}`);
     revalidatePath("/admin/logins");
     
     return { success: true };

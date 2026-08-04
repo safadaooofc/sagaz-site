@@ -17,5 +17,18 @@ export default async function SuportePage() {
     }
   });
 
-  return <SuporteClient initialTickets={tickets} />;
+  const recentTransactions = await (prisma as any).transaction.findMany({
+    where: { 
+      userId: session.user.id,
+      status: "COMPLETED"
+    },
+    include: {
+      product: true,
+      stockItems: true
+    },
+    orderBy: { date: "desc" },
+    take: 50
+  });
+
+  return <SuporteClient initialTickets={tickets} purchases={recentTransactions} />;
 }

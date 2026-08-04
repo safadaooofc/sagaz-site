@@ -30,7 +30,7 @@ export function UsersClient({ users, currentUser }: { users: any[], currentUser:
     const res = await createAdminLogin(currentUser.id, adminName);
     if (res.success) {
       toast.success("Admin criado com sucesso!");
-      setNewAdminPassword(res.password);
+      setNewAdminPassword(res.password || "");
     } else {
       toast.error(res.error || "Erro ao criar admin");
     }

@@ -22,7 +22,8 @@ export async function getMinesConfig() {
 
 export async function saveMinesConfig(isActive: boolean, multiplier: string, maxBet: string) {
   const session = await auth();
-  if (!session?.user || (session.user.role !== "ADMIN" && session.user.role !== "SUPERADMIN" && session.user.role !== "OWNER")) {
+  const userRole = (session?.user as any)?.role;
+  if (!session?.user || (userRole !== "ADMIN" && userRole !== "SUPERADMIN" && userRole !== "OWNER")) {
     return { success: false, error: "Não autorizado" };
   }
 

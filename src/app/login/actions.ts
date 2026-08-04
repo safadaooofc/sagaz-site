@@ -2,11 +2,9 @@
 
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { Resend } from "resend";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { headers } from "next/headers";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { sendResetCodeEmail } from "@/lib/mail";
 
 export async function sendPasswordResetOtp(email: string) {
   try {
@@ -34,37 +32,9 @@ export async function sendPasswordResetOtp(email: string) {
 
     console.log(`\n\n[RECOVERY CODE GERADO] Email: ${email} | Código: ${code}\n\n`);
 
-    const emailHtml = `
-      <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; background-color: #0f1115; color: #ffffff; padding: 40px 20px; text-align: center; border-radius: 8px;">
-        <div style="max-width: 500px; margin: 0 auto; background-color: #181a20; padding: 40px; border-radius: 12px; border: 1px solid #262933;">
-          <h1 style="color: #ffffff; font-size: 28px; margin-bottom: 8px; letter-spacing: -1px;">KNIGHT</h1>
-          <p style="color: #9ca3af; font-size: 16px; margin-bottom: 32px;">Recuperação de Senha</p>
-          
-          <div style="background-color: #0f1115; border: 1px solid #262933; padding: 24px; border-radius: 8px; margin-bottom: 32px;">
-            <p style="color: #9ca3af; font-size: 14px; margin-bottom: 12px; margin-top: 0;">Seu código para redefinir a senha é:</p>
-            <h2 style="color: #eab308; font-size: 36px; letter-spacing: 8px; margin: 0;">${code}</h2>
-          </div>
-          
-          <p style="color: #6b7280; font-size: 13px; margin-bottom: 8px;">Este código expira em 10 minutos.</p>
-          <p style="color: #6b7280; font-size: 13px; margin-bottom: 0;">Se você não solicitou a troca de senha, sua conta está segura. Ignore este e-mail.</p>
-        </div>
-      </div>
-    `;
-
-    try {
-      const { error } = await resend.emails.send({
-        from: 'KNIGHT <onboarding@resend.dev>',
-        to: [email],
-        subject: `Recuperação de Senha - ${code}`,
-        html: emailHtml,
-      });
-
-      if (error) {
-        console.error("Resend send error:", error);
-        // Continue anyway since we logged the code, or return error if you want strict mode
-      }
-    } catch (mailError) {
-      console.error("Erro ao tentar disparar email:", mailError);
+    const emailRes = await sendResetCodeEmail(email, code);
+    if (!emailRes.success) {
+      console.error(emailRes.error);
     }
 
     return { success: true };

@@ -27,6 +27,8 @@ model User {
   adminLastActive DateTime?
   twoFactorMethod String        @default("EMAIL") // NONE, EMAIL, APP
   twoFactorSecret String?
+  resetPasswordToken String?
+  resetPasswordExpires DateTime?
   
   accounts      Account[]
   sessions      Session[]
