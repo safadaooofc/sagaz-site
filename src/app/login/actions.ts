@@ -20,6 +20,7 @@ export async function sendPasswordResetOtp(email: string) {
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
+      console.log(`\n\n[AVISO] Tentativa de recuperação de senha para e-mail inexistente: ${email}. Retornando sucesso falso por segurança.\n\n`);
       // Retorna sucesso fake para evitar enumeração de e-mails
       return { success: true };
     }
