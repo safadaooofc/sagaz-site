@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,14 +75,19 @@ export default function LoginPage() {
     setError("");
     setSuccess("");
 
-    const res = await sendPasswordResetOtp(email);
-    setLoading(false);
+    try {
+      const res = await sendPasswordResetOtp(email);
+      setLoading(false);
 
-    if (res.error) {
-      setError(res.error);
-    } else {
-      setSuccess("Se o e-mail existir, um código foi enviado para recuperação.");
-      setStep(4);
+      if (res?.error) {
+        setError(res.error);
+      } else {
+        setSuccess("Se o e-mail existir, um código foi enviado para recuperação.");
+        setStep(4);
+      }
+    } catch (err: any) {
+      setLoading(false);
+      setError("Ocorreu um erro inesperado ao conectar com o servidor.");
     }
   };
 
@@ -105,7 +111,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] flex w-full font-sans text-white">
+    <div className="min-h-screen bg-[#050505] flex w-full font-sans text-white overflow-hidden">
       {/* Left Column (Form) */}
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 sm:p-12 relative z-10">
         <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-[#71717a] hover:text-white transition-colors text-sm font-medium">
@@ -149,6 +155,7 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setIsPasswordFocused(false)}
                   className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all"
                   placeholder="E-mail"
                 />
@@ -159,6 +166,8 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setIsPasswordFocused(true)}
+                  onBlur={() => setIsPasswordFocused(false)}
                   className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all tracking-widest"
                   placeholder="Senha (••••••••)"
                 />
@@ -277,6 +286,8 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setIsPasswordFocused(true)}
+                  onBlur={() => setIsPasswordFocused(false)}
                   className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all tracking-widest"
                   placeholder="Nova Senha (••••••••)"
                 />
@@ -310,9 +321,10 @@ export default function LoginPage() {
         <div className="absolute top-[40%] left-[50%] w-[300px] h-[300px] rounded-full bg-purple-900/5 blur-[80px]" />
         
         {/* Credit Cards Illustration */}
-        <div className="relative w-full max-w-lg aspect-square perspective-[1200px] flex items-center justify-center">
-          {/* Back Card */}
-          <div className="absolute w-80 h-48 bg-gradient-to-br from-slate-800 to-indigo-950 rounded-2xl border border-indigo-500/20 shadow-[0_30px_60px_rgba(30,27,75,0.6)] transform -rotate-12 translate-x-[-15%] translate-y-[15%] p-6 flex flex-col justify-between backdrop-blur-md z-10 transition-transform duration-700 hover:scale-105 hover:-rotate-6">
+        <div className="relative w-full max-w-lg aspect-square perspective-[1500px] flex items-center justify-center">
+          
+          {/* Back Card (Static) */}
+          <div className="absolute w-80 h-48 bg-gradient-to-br from-slate-800 to-indigo-950 rounded-2xl border border-indigo-500/20 shadow-[0_30px_60px_rgba(30,27,75,0.6)] transform -rotate-12 translate-x-[-15%] translate-y-[15%] p-6 flex flex-col justify-between backdrop-blur-md z-10 transition-transform duration-700">
             <div className="flex justify-between items-start">
               <div className="w-12 h-8 bg-slate-300/20 rounded-md" />
               <Wifi className="w-7 h-7 text-white/40 rotate-90" />
@@ -326,22 +338,48 @@ export default function LoginPage() {
             </div>
           </div>
           
-          {/* Front Card */}
-          <div className="absolute w-80 h-48 bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#09090b] rounded-2xl border border-blue-500/30 shadow-[0_30px_60px_rgba(0,0,0,0.8)] transform rotate-12 translate-x-[15%] translate-y-[-15%] p-6 flex flex-col justify-between backdrop-blur-md z-20 transition-transform duration-700 hover:scale-105 hover:rotate-6">
-            <div className="flex justify-between items-start">
-              <div className="w-12 h-8 bg-slate-300/20 rounded-md" />
-              <div className="flex -space-x-3">
-                <div className="w-8 h-8 rounded-full bg-red-500/80 mix-blend-screen shadow-inner" />
-                <div className="w-8 h-8 rounded-full bg-yellow-500/80 mix-blend-screen shadow-inner" />
+          {/* Front Card (Flipping) */}
+          <div className={`absolute w-80 h-48 z-20 transition-all duration-700 [transform-style:preserve-3d] ${
+            isPasswordFocused 
+              ? 'translate-x-[15%] translate-y-[-15%] [transform:rotateY(180deg)_rotateZ(0deg)_scale(1.1)] shadow-[0_40px_80px_rgba(0,0,0,0.9)]'
+              : 'translate-x-[15%] translate-y-[-15%] [transform:rotateY(0deg)_rotateZ(12deg)] hover:rotate-6 hover:scale-105 shadow-[0_30px_60px_rgba(0,0,0,0.8)]'
+          }`}>
+            
+            {/* Front Side */}
+            <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#09090b] rounded-2xl border border-blue-500/30 p-6 flex flex-col justify-between backdrop-blur-md">
+              <div className="flex justify-between items-start">
+                <div className="w-12 h-8 bg-slate-300/20 rounded-md" />
+                <div className="flex -space-x-3">
+                  <div className="w-8 h-8 rounded-full bg-red-500/80 mix-blend-screen shadow-inner" />
+                  <div className="w-8 h-8 rounded-full bg-yellow-500/80 mix-blend-screen shadow-inner" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="text-white/90 font-mono tracking-[0.1em] text-sm shadow-sm truncate max-w-[250px]">
+                  {email || "seu@email.com"}
+                </div>
+                <div className="flex justify-between text-[11px] text-white/70 uppercase tracking-widest font-bold">
+                  <span>Premium Black</span>
+                  <span>09/27</span>
+                </div>
               </div>
             </div>
-            <div className="space-y-4">
-              <div className="text-white/90 font-mono tracking-[0.25em] text-base shadow-sm">•••• •••• •••• 8888</div>
-              <div className="flex justify-between text-[11px] text-white/70 uppercase tracking-widest font-bold">
-                <span>Premium Black</span>
-                <span>09/27</span>
+
+            {/* Back Side */}
+            <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] bg-gradient-to-br from-[#09090b] via-[#1e1b4b] to-[#0f172a] rounded-2xl border border-purple-500/30 p-0 flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden">
+              <div className="w-full h-12 bg-black/90 mt-6 shadow-inner" />
+              <div className="px-6 mt-4 w-full flex justify-end">
+                <div className="bg-white/90 w-full max-w-[200px] h-10 rounded-sm flex items-center justify-end px-4 overflow-hidden">
+                  <span className="text-black font-mono font-bold tracking-[0.3em] text-xl transform translate-y-1">
+                    {password ? "•".repeat(Math.min(password.length, 12)) : "••••••••"}
+                  </span>
+                </div>
+              </div>
+              <div className="px-6 mt-auto mb-4 text-[9px] text-white/30 text-right uppercase tracking-wider">
+                Authorized Signature
               </div>
             </div>
+
           </div>
         </div>
       </div>

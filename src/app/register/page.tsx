@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, CheckCircle2, ShieldCheck, Wifi } from "lucide-react";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,130 +73,220 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1115] flex flex-col items-center justify-center p-4 relative font-sans">
-      <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-[#9ca3af] hover:text-white transition-colors text-sm font-medium">
-        <ArrowLeft size={16} /> Voltar
-      </Link>
-      
-      <div className="w-full max-w-[400px]">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">{step === 1 ? "Crie sua conta" : "Verificação de Segurança"}</h1>
-          <p className="text-sm text-[#9ca3af]">
-            {step === 1 ? "Preencha os dados abaixo para se cadastrar" : "Digite o código de 6 dígitos que enviamos para o seu e-mail"}
-          </p>
+    <div className="min-h-screen bg-[#050505] flex w-full font-sans text-white overflow-hidden">
+      {/* Left Column (Form) */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 sm:p-12 relative z-10">
+        <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-[#71717a] hover:text-white transition-colors text-sm font-medium">
+          <ArrowLeft size={16} /> Voltar para o início
+        </Link>
+        
+        <div className="w-full max-w-[420px] bg-[#121214] rounded-2xl p-8 sm:p-10 border border-[#27272a] shadow-2xl relative">
+          
+          <div className="mb-8 text-center sm:text-left">
+            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">
+              {step === 1 ? "Crie sua conta" : "Verificação de Segurança"}
+            </h1>
+            <p className="text-[#a1a1aa] text-sm">
+              {step === 1 ? "Preencha os dados abaixo para se cadastrar" : "Digite o código enviado ao seu e-mail"}
+            </p>
+          </div>
+          
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm mb-6 text-center backdrop-blur-sm">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-3 rounded-lg text-sm mb-6 text-center backdrop-blur-sm">
+              {success}
+            </div>
+          )}
+          
+          {step === 1 ? (
+            <form className="space-y-4" onSubmit={handleSendOtp}>
+              <div>
+                <input 
+                  type="text" 
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onFocus={() => setIsPasswordFocused(false)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all"
+                  placeholder="Nome de Usuário"
+                />
+              </div>
+              <div>
+                <input 
+                  type="email" 
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setIsPasswordFocused(false)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all"
+                  placeholder="E-mail"
+                />
+              </div>
+              <div>
+                <input 
+                  type="password" 
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setIsPasswordFocused(true)}
+                  onBlur={() => setIsPasswordFocused(false)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all tracking-widest"
+                  placeholder="Senha (••••••••)"
+                />
+              </div>
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-xs font-medium text-[#71717a]">Código de Convite</label>
+                  <span className="text-[10px] text-[#52525b] uppercase tracking-wider">Opcional</span>
+                </div>
+                <input 
+                  type="text"
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                  onFocus={() => setIsPasswordFocused(false)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all uppercase"
+                  placeholder="Ex: XYZ123"
+                />
+              </div>
+
+              {/* Simulated Captcha */}
+              <div className="flex items-center gap-3 bg-[#0a0a0a] border border-[#27272a] rounded-lg p-3 mt-4">
+                <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                </div>
+                <span className="text-[#a1a1aa] text-sm font-medium">Verificado!</span>
+                <div className="ml-auto flex items-center gap-1.5 opacity-60">
+                  <ShieldCheck className="w-4 h-4 text-[#71717a]" />
+                  <span className="text-[10px] text-[#71717a] uppercase tracking-wider font-bold">Secured</span>
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={loading || !email || !password || !name}
+                className="w-full bg-gradient-to-r from-[#52525b] to-[#3f3f46] hover:from-[#71717a] hover:to-[#52525b] text-white font-bold text-sm py-4 rounded-lg transition-all flex justify-center items-center gap-2 mt-4 disabled:opacity-50 shadow-lg shadow-black/20"
+              >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : "Criar conta"}
+              </button>
+            </form>
+          ) : (
+            <form className="space-y-4" onSubmit={handleRegisterAndLogin}>
+              <div>
+                <input 
+                  type="text" 
+                  required
+                  maxLength={6}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all text-center text-xl tracking-[0.5em]"
+                  placeholder="000000"
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                disabled={loading || code.length !== 6}
+                className="w-full bg-gradient-to-r from-[#52525b] to-[#3f3f46] hover:from-[#71717a] hover:to-[#52525b] text-white font-bold text-sm py-4 rounded-lg transition-all flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg"
+              >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : "Validar Código"}
+              </button>
+
+              <button 
+                type="button"
+                onClick={() => {
+                  setStep(1);
+                  setSuccess("");
+                  setCode("");
+                }}
+                className="w-full bg-transparent text-[#71717a] hover:text-white font-medium text-sm py-2 transition-colors mt-2"
+              >
+                Voltar e corrigir dados
+              </button>
+            </form>
+          )}
+          
+          {step === 1 && (
+            <div className="mt-6 pt-6 border-t border-[#27272a] text-center text-sm text-[#71717a]">
+              Já tem uma conta? <Link href="/login" className="text-white hover:text-[#d4d4d8] font-medium transition-colors">Fazer login</Link>
+            </div>
+          )}
         </div>
-        
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm mb-4 text-center">
-            {error}
-          </div>
-        )}
+      </div>
 
-        {success && (
-          <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-3 rounded-lg text-sm mb-4 text-center">
-            {success}
-          </div>
-        )}
+      {/* Right Column (Visual) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#050505] relative overflow-hidden items-center justify-center border-l border-[#1a1a1a]">
+        {/* Abstract circular shapes */}
+        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-blue-900/10 blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-900/10 blur-[120px]" />
+        <div className="absolute top-[40%] left-[50%] w-[300px] h-[300px] rounded-full bg-purple-900/5 blur-[80px]" />
         
-        {step === 1 ? (
-          <form className="space-y-4" onSubmit={handleSendOtp}>
-            <div>
-              <label className="block text-sm font-bold text-white mb-2">Nome de Usuário</label>
-              <input 
-                type="text" 
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
-                placeholder="Seu nome"
-              />
+        {/* Credit Cards Illustration */}
+        <div className="relative w-full max-w-lg aspect-square perspective-[1500px] flex items-center justify-center">
+          
+          {/* Back Card (Static) */}
+          <div className="absolute w-80 h-48 bg-gradient-to-br from-slate-800 to-indigo-950 rounded-2xl border border-indigo-500/20 shadow-[0_30px_60px_rgba(30,27,75,0.6)] transform -rotate-12 translate-x-[-15%] translate-y-[15%] p-6 flex flex-col justify-between backdrop-blur-md z-10 transition-transform duration-700">
+            <div className="flex justify-between items-start">
+              <div className="w-12 h-8 bg-slate-300/20 rounded-md" />
+              <Wifi className="w-7 h-7 text-white/40 rotate-90" />
             </div>
-            <div>
-              <label className="block text-sm font-bold text-white mb-2">Email</label>
-              <input 
-                type="email" 
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
-                placeholder="seu@email.com"
-              />
+            <div className="space-y-4">
+              <div className="text-white/80 font-mono tracking-[0.25em] text-base">•••• •••• •••• 4242</div>
+              <div className="flex justify-between text-[11px] text-white/50 uppercase tracking-widest font-bold">
+                <span>Sagaz Bank</span>
+                <span>12/28</span>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-bold text-white mb-2">Senha</label>
-              <input 
-                type="password" 
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors tracking-widest"
-                placeholder="••••••••"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold text-white mb-2 flex justify-between">
-                <span>Código de Convite</span>
-                <span className="text-[#9ca3af] font-normal text-xs">(Opcional)</span>
-              </label>
-              <input 
-                type="text"
-                value={inviteCode}
-                onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
-                placeholder="Ex: XYZ123"
-              />
-            </div>
+          </div>
+          
+          {/* Front Card (Flipping) */}
+          <div className={`absolute w-80 h-48 z-20 transition-all duration-700 [transform-style:preserve-3d] ${
+            isPasswordFocused 
+              ? 'translate-x-[15%] translate-y-[-15%] [transform:rotateY(180deg)_rotateZ(0deg)_scale(1.1)] shadow-[0_40px_80px_rgba(0,0,0,0.9)]'
+              : 'translate-x-[15%] translate-y-[-15%] [transform:rotateY(0deg)_rotateZ(12deg)] hover:rotate-6 hover:scale-105 shadow-[0_30px_60px_rgba(0,0,0,0.8)]'
+          }`}>
             
-            <button 
-              type="submit" 
-              disabled={loading || !email || !password || !name}
-              className="w-full bg-white hover:bg-gray-200 text-black font-bold text-sm py-3.5 rounded-lg transition-colors flex justify-center items-center gap-2 mt-4 disabled:opacity-50"
-            >
-              {loading ? <Loader2 size={16} className="animate-spin" /> : "Criar conta e Continuar"}
-            </button>
-          </form>
-        ) : (
-          <form className="space-y-4" onSubmit={handleRegisterAndLogin}>
-            <div>
-              <label className="block text-sm font-bold text-white mb-2">Código de 6 dígitos</label>
-              <input 
-                type="text" 
-                required
-                maxLength={6}
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors text-center text-xl tracking-[0.5em]"
-                placeholder="000000"
-              />
+            {/* Front Side */}
+            <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#09090b] rounded-2xl border border-blue-500/30 p-6 flex flex-col justify-between backdrop-blur-md">
+              <div className="flex justify-between items-start">
+                <div className="w-12 h-8 bg-slate-300/20 rounded-md" />
+                <div className="flex -space-x-3">
+                  <div className="w-8 h-8 rounded-full bg-red-500/80 mix-blend-screen shadow-inner" />
+                  <div className="w-8 h-8 rounded-full bg-yellow-500/80 mix-blend-screen shadow-inner" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="text-white/90 font-mono tracking-[0.1em] text-sm shadow-sm truncate max-w-[250px]">
+                  {email || "seu@email.com"}
+                </div>
+                <div className="flex justify-between text-[11px] text-white/70 uppercase tracking-widest font-bold">
+                  <span className="truncate max-w-[120px]">{name || "Premium Black"}</span>
+                  <span>09/27</span>
+                </div>
+              </div>
             </div>
-            
-            <button 
-              type="submit" 
-              disabled={loading || code.length !== 6}
-              className="w-full bg-white hover:bg-gray-200 text-black font-bold text-sm py-3.5 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
-            >
-              {loading ? <Loader2 size={16} className="animate-spin" /> : "Validar Código"}
-            </button>
 
-            <button 
-              type="button"
-              onClick={() => {
-                setStep(1);
-                setSuccess("");
-                setCode("");
-              }}
-              className="w-full bg-transparent text-[#9ca3af] hover:text-white font-medium text-sm py-2 transition-colors"
-            >
-              Voltar e corrigir dados
-            </button>
-          </form>
-        )}
-        
-        {step === 1 && (
-          <div className="mt-6 text-center text-sm text-[#9ca3af]">
-            Já tem uma conta? <Link href="/login" className="text-white hover:underline font-medium underline">Fazer login</Link>
+            {/* Back Side */}
+            <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] bg-gradient-to-br from-[#09090b] via-[#1e1b4b] to-[#0f172a] rounded-2xl border border-purple-500/30 p-0 flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden">
+              <div className="w-full h-12 bg-black/90 mt-6 shadow-inner" />
+              <div className="px-6 mt-4 w-full flex justify-end">
+                <div className="bg-white/90 w-full max-w-[200px] h-10 rounded-sm flex items-center justify-end px-4 overflow-hidden">
+                  <span className="text-black font-mono font-bold tracking-[0.3em] text-xl transform translate-y-1">
+                    {password ? "•".repeat(Math.min(password.length, 12)) : "••••••••"}
+                  </span>
+                </div>
+              </div>
+              <div className="px-6 mt-auto mb-4 text-[9px] text-white/30 text-right uppercase tracking-wider">
+                Authorized Signature
+              </div>
+            </div>
+
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
