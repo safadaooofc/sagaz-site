@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, CheckCircle2, ShieldCheck, Wifi, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -105,191 +105,245 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1115] flex flex-col items-center justify-center p-4 relative font-sans">
-      <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-[#9ca3af] hover:text-white transition-colors text-sm font-medium">
-        <ArrowLeft size={16} /> Voltar
-      </Link>
-      
-      <div className="w-full max-w-[400px]">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            {step === 1 && "Entre na sua conta"}
-            {step === 2 && "Verificação de Segurança"}
-            {step === 3 && "Esqueceu a Senha?"}
-            {step === 4 && "Criar Nova Senha"}
-          </h1>
-          <p className="text-sm text-[#9ca3af]">
-            {step === 1 && "Digite seu email e senha para acessar o KNIGHT"}
-            {step === 2 && "Digite o código de 6 dígitos que enviamos para o seu e-mail"}
-            {step === 3 && "Digite seu e-mail para enviarmos um código de recuperação"}
-            {step === 4 && "Digite o código recebido no e-mail e a sua nova senha"}
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#050505] flex w-full font-sans text-white">
+      {/* Left Column (Form) */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 sm:p-12 relative z-10">
+        <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-[#71717a] hover:text-white transition-colors text-sm font-medium">
+          <ArrowLeft size={16} /> Voltar para o início
+        </Link>
         
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm mb-4 text-center">
-            {error}
+        <div className="w-full max-w-[420px] bg-[#121214] rounded-2xl p-8 sm:p-10 border border-[#27272a] shadow-2xl relative">
+          
+          <div className="mb-8 text-center sm:text-left">
+            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">
+              {step === 1 && "Bem-vindo de volta!"}
+              {step === 2 && "Verificação de Segurança"}
+              {step === 3 && "Recuperar Senha"}
+              {step === 4 && "Nova Senha"}
+            </h1>
+            <p className="text-[#a1a1aa] text-sm">
+              {step === 1 && "Entre com suas credenciais para acessar"}
+              {step === 2 && "Digite o código enviado ao seu e-mail"}
+              {step === 3 && "Digite seu e-mail para enviarmos um código"}
+              {step === 4 && "Insira o código e defina sua nova senha"}
+            </p>
           </div>
-        )}
-
-        {success && (
-          <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-3 rounded-lg text-sm mb-4 text-center">
-            {success}
-          </div>
-        )}
-        
-        {step === 1 && (
-          <form className="space-y-4" onSubmit={handleSendOtp}>
-            <div>
-              <label className="block text-sm font-bold text-white mb-2">Email</label>
-              <input 
-                type="email" 
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
-                placeholder="seu@email.com"
-              />
+          
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm mb-6 text-center backdrop-blur-sm">
+              {error}
             </div>
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-bold text-white">Senha</label>
-                <button type="button" onClick={() => { setStep(3); setError(""); setSuccess(""); }} className="text-xs text-[#9ca3af] hover:text-white transition-colors">Esqueceu sua senha?</button>
+          )}
+
+          {success && (
+            <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-3 rounded-lg text-sm mb-6 text-center backdrop-blur-sm">
+              {success}
+            </div>
+          )}
+          
+          {step === 1 && (
+            <form className="space-y-4" onSubmit={handleSendOtp}>
+              <div>
+                <input 
+                  type="email" 
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all"
+                  placeholder="E-mail"
+                />
               </div>
-              <input 
-                type="password" 
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors tracking-widest"
-                placeholder="••••••••"
-              />
-            </div>
-            
-            <button 
-              type="submit" 
-              disabled={loading || !email || !password}
-              className="w-full bg-white hover:bg-gray-200 text-black font-bold text-sm py-3.5 rounded-lg transition-colors flex justify-center items-center gap-2 mt-2 disabled:opacity-50"
-            >
-              {loading ? <Loader2 size={16} className="animate-spin" /> : "Continuar"}
-            </button>
-          </form>
-        )}
+              <div>
+                <input 
+                  type="password" 
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all tracking-widest"
+                  placeholder="Senha (••••••••)"
+                />
+              </div>
+              
+              {/* Simulated Captcha */}
+              <div className="flex items-center gap-3 bg-[#0a0a0a] border border-[#27272a] rounded-lg p-3 mt-4">
+                <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                </div>
+                <span className="text-[#a1a1aa] text-sm font-medium">Sucesso!</span>
+                <div className="ml-auto flex items-center gap-1.5 opacity-60">
+                  <ShieldCheck className="w-4 h-4 text-[#71717a]" />
+                  <span className="text-[10px] text-[#71717a] uppercase tracking-wider font-bold">Secured</span>
+                </div>
+              </div>
 
-        {step === 2 && (
-          <form className="space-y-4" onSubmit={handleLogin}>
-            <div>
-              <label className="block text-sm font-bold text-white mb-2">Código de 6 dígitos</label>
-              <input 
-                type="text" 
-                required
-                maxLength={6}
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors text-center text-xl tracking-[0.5em]"
-                placeholder="000000"
-              />
-            </div>
-            
-            <button 
-              type="submit" 
-              disabled={loading || code.length !== 6}
-              className="w-full bg-white hover:bg-gray-200 text-black font-bold text-sm py-3.5 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
-            >
-              {loading ? <Loader2 size={16} className="animate-spin" /> : "Validar e Entrar"}
-            </button>
+              <button 
+                type="submit" 
+                disabled={loading || !email || !password}
+                className="w-full bg-gradient-to-r from-[#52525b] to-[#3f3f46] hover:from-[#71717a] hover:to-[#52525b] text-white font-bold text-sm py-4 rounded-lg transition-all flex justify-center items-center gap-2 mt-2 disabled:opacity-50 shadow-lg shadow-black/20"
+              >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : "Entrar"}
+              </button>
 
-            <button 
-              type="button"
-              onClick={() => { setStep(1); setSuccess(""); setCode(""); }}
-              className="w-full bg-transparent text-[#9ca3af] hover:text-white font-medium text-sm py-2 transition-colors"
-            >
-              Voltar e usar outra senha
-            </button>
-          </form>
-        )}
+              <div className="flex items-center justify-between mt-6 pt-6 border-t border-[#27272a]">
+                <button type="button" onClick={() => { setStep(3); setError(""); setSuccess(""); }} className="text-sm text-[#71717a] hover:text-[#d4d4d8] transition-colors">
+                  Esqueci a senha
+                </button>
+                <Link href="/register" className="text-sm text-[#71717a] hover:text-[#d4d4d8] transition-colors flex items-center gap-1">
+                  Criar conta <ArrowRight size={14} />
+                </Link>
+              </div>
+            </form>
+          )}
 
-        {step === 3 && (
-          <form className="space-y-4" onSubmit={handleForgotSendOtp}>
-            <div>
-              <label className="block text-sm font-bold text-white mb-2">Email cadastrado</label>
-              <input 
-                type="email" 
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors"
-                placeholder="seu@email.com"
-              />
-            </div>
-            
-            <button 
-              type="submit" 
-              disabled={loading || !email}
-              className="w-full bg-white hover:bg-gray-200 text-black font-bold text-sm py-3.5 rounded-lg transition-colors flex justify-center items-center gap-2 mt-2 disabled:opacity-50"
-            >
-              {loading ? <Loader2 size={16} className="animate-spin" /> : "Enviar Código"}
-            </button>
+          {step === 2 && (
+            <form className="space-y-4" onSubmit={handleLogin}>
+              <div>
+                <input 
+                  type="text" 
+                  required
+                  maxLength={6}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all text-center text-xl tracking-[0.5em]"
+                  placeholder="000000"
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                disabled={loading || code.length !== 6}
+                className="w-full bg-gradient-to-r from-[#52525b] to-[#3f3f46] hover:from-[#71717a] hover:to-[#52525b] text-white font-bold text-sm py-4 rounded-lg transition-all flex justify-center items-center gap-2 disabled:opacity-50 shadow-lg"
+              >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : "Validar e Entrar"}
+              </button>
 
-            <button 
-              type="button"
-              onClick={() => { setStep(1); setError(""); }}
-              className="w-full bg-transparent text-[#9ca3af] hover:text-white font-medium text-sm py-2 transition-colors mt-2"
-            >
-              Lembrou a senha? Voltar ao login
-            </button>
-          </form>
-        )}
+              <button 
+                type="button"
+                onClick={() => { setStep(1); setSuccess(""); setCode(""); }}
+                className="w-full bg-transparent text-[#71717a] hover:text-white font-medium text-sm py-2 transition-colors mt-2"
+              >
+                Voltar e usar outra senha
+              </button>
+            </form>
+          )}
 
-        {step === 4 && (
-          <form className="space-y-4" onSubmit={handleResetPassword}>
-            <div>
-              <label className="block text-sm font-bold text-white mb-2">Código recebido no Email</label>
-              <input 
-                type="text" 
-                required
-                maxLength={6}
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors text-center text-xl tracking-[0.5em]"
-                placeholder="000000"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold text-white mb-2">Nova Senha</label>
-              <input 
-                type="password" 
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#181a20] border border-transparent rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:outline-none focus:border-[#eab308] transition-colors tracking-widest"
-                placeholder="••••••••"
-              />
-            </div>
-            
-            <button 
-              type="submit" 
-              disabled={loading || code.length !== 6 || password.length < 6}
-              className="w-full bg-white hover:bg-gray-200 text-black font-bold text-sm py-3.5 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
-            >
-              {loading ? <Loader2 size={16} className="animate-spin" /> : "Confirmar Nova Senha"}
-            </button>
+          {step === 3 && (
+            <form className="space-y-4" onSubmit={handleForgotSendOtp}>
+              <div>
+                <input 
+                  type="email" 
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all"
+                  placeholder="E-mail cadastrado"
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                disabled={loading || !email}
+                className="w-full bg-gradient-to-r from-[#52525b] to-[#3f3f46] hover:from-[#71717a] hover:to-[#52525b] text-white font-bold text-sm py-4 rounded-lg transition-all flex justify-center items-center gap-2 mt-2 disabled:opacity-50 shadow-lg"
+              >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : "Enviar Código"}
+              </button>
 
-            <button 
-              type="button"
-              onClick={() => { setStep(3); setError(""); setSuccess(""); }}
-              className="w-full bg-transparent text-[#9ca3af] hover:text-white font-medium text-sm py-2 transition-colors mt-2"
-            >
-              Reenviar código
-            </button>
-          </form>
-        )}
+              <button 
+                type="button"
+                onClick={() => { setStep(1); setError(""); }}
+                className="w-full bg-transparent text-[#71717a] hover:text-white font-medium text-sm py-2 transition-colors mt-2"
+              >
+                Lembrou a senha? Voltar ao login
+              </button>
+            </form>
+          )}
+
+          {step === 4 && (
+            <form className="space-y-4" onSubmit={handleResetPassword}>
+              <div>
+                <input 
+                  type="text" 
+                  required
+                  maxLength={6}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all text-center text-xl tracking-[0.5em] mb-4"
+                  placeholder="000000"
+                />
+              </div>
+              <div>
+                <input 
+                  type="password" 
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all tracking-widest"
+                  placeholder="Nova Senha (••••••••)"
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                disabled={loading || code.length !== 6 || password.length < 6}
+                className="w-full bg-gradient-to-r from-[#52525b] to-[#3f3f46] hover:from-[#71717a] hover:to-[#52525b] text-white font-bold text-sm py-4 rounded-lg transition-all flex justify-center items-center gap-2 mt-2 disabled:opacity-50 shadow-lg"
+              >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : "Confirmar Nova Senha"}
+              </button>
+
+              <button 
+                type="button"
+                onClick={() => { setStep(3); setError(""); setSuccess(""); }}
+                className="w-full bg-transparent text-[#71717a] hover:text-white font-medium text-sm py-2 transition-colors mt-2"
+              >
+                Reenviar código
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+
+      {/* Right Column (Visual) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#050505] relative overflow-hidden items-center justify-center border-l border-[#1a1a1a]">
+        {/* Abstract circular shapes */}
+        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-blue-900/10 blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-900/10 blur-[120px]" />
+        <div className="absolute top-[40%] left-[50%] w-[300px] h-[300px] rounded-full bg-purple-900/5 blur-[80px]" />
         
-        {step === 1 && (
-          <div className="mt-6 text-center text-sm text-[#9ca3af]">
-            Não tem uma conta? <Link href="/register" className="text-white hover:underline font-medium underline">Criar conta</Link>
+        {/* Credit Cards Illustration */}
+        <div className="relative w-full max-w-lg aspect-square perspective-[1200px] flex items-center justify-center">
+          {/* Back Card */}
+          <div className="absolute w-80 h-48 bg-gradient-to-br from-slate-800 to-indigo-950 rounded-2xl border border-indigo-500/20 shadow-[0_30px_60px_rgba(30,27,75,0.6)] transform -rotate-12 translate-x-[-15%] translate-y-[15%] p-6 flex flex-col justify-between backdrop-blur-md z-10 transition-transform duration-700 hover:scale-105 hover:-rotate-6">
+            <div className="flex justify-between items-start">
+              <div className="w-12 h-8 bg-slate-300/20 rounded-md" />
+              <Wifi className="w-7 h-7 text-white/40 rotate-90" />
+            </div>
+            <div className="space-y-4">
+              <div className="text-white/80 font-mono tracking-[0.25em] text-base">•••• •••• •••• 4242</div>
+              <div className="flex justify-between text-[11px] text-white/50 uppercase tracking-widest font-bold">
+                <span>Sagaz Bank</span>
+                <span>12/28</span>
+              </div>
+            </div>
           </div>
-        )}
+          
+          {/* Front Card */}
+          <div className="absolute w-80 h-48 bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#09090b] rounded-2xl border border-blue-500/30 shadow-[0_30px_60px_rgba(0,0,0,0.8)] transform rotate-12 translate-x-[15%] translate-y-[-15%] p-6 flex flex-col justify-between backdrop-blur-md z-20 transition-transform duration-700 hover:scale-105 hover:rotate-6">
+            <div className="flex justify-between items-start">
+              <div className="w-12 h-8 bg-slate-300/20 rounded-md" />
+              <div className="flex -space-x-3">
+                <div className="w-8 h-8 rounded-full bg-red-500/80 mix-blend-screen shadow-inner" />
+                <div className="w-8 h-8 rounded-full bg-yellow-500/80 mix-blend-screen shadow-inner" />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="text-white/90 font-mono tracking-[0.25em] text-base shadow-sm">•••• •••• •••• 8888</div>
+              <div className="flex justify-between text-[11px] text-white/70 uppercase tracking-widest font-bold">
+                <span>Premium Black</span>
+                <span>09/27</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
