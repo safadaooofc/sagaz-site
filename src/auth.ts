@@ -30,6 +30,35 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const { email, password, code, isRegister, name, inviteCode } = credentials;
 
+        // Handle Login
+        const user = await prisma.user.findUnique({
+          where: { email: email as string }
+        });
+
+        if (!user) {
+          throw new Error("Usuário não encontrado");
+        }
+
+        if (user.twoFactorMethod === "NONE") {
+          // If no 2FA is required, we just proceed. The password was already verified in send-otp or we should verify it here if we want to be safe!
+          // Actually, let's verify password here to be secure!
+          const isValid = await bcrypt.compare(password as string, user.password as string);
+          if (!isValid) throw new Error("Credenciais inválidas");
+          return user;
+        }
+
+        if (user.twoFactorMethod === "APP") {
+          // Verify with otplib
+          const { authenticator } = require("otplib");
+          if (!user.twoFactorSecret) throw new Error("2FA não configurado corretamente");
+          
+          const isValidOTP = authenticator.verify({ token: code as string, secret: user.twoFactorSecret });
+          if (!isValidOTP) throw new Error("Código Authenticator inválido");
+          
+          return user;
+        }
+
+        // Default: EMAIL
         // Verify OTP
         const otpRecord = await prisma.otpCode.findFirst({
           where: { email: email as string, code: code as string }
@@ -122,15 +151,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return newUser;
         }
 
-        // Handle Login
-        const user = await prisma.user.findUnique({
-          where: { email: email as string }
-        });
-
-        if (!user) {
-          throw new Error("Usuário não encontrado");
-        }
-
+        // Registration already returned user at the end of the block.
+        // If we reach here, it's because it was not a registration. 
+        // We already handled login logic at the top of the function.
         return user;
       }
     })

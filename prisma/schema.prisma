@@ -25,6 +25,8 @@ model User {
   tokenVersion  Int             @default(1)
   adminStatus   String          @default("OFFLINE")
   adminLastActive DateTime?
+  twoFactorMethod String        @default("EMAIL") // NONE, EMAIL, APP
+  twoFactorSecret String?
   
   accounts      Account[]
   sessions      Session[]

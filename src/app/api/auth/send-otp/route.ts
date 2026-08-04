@@ -50,6 +50,14 @@ export async function POST(req: Request) {
       if (!isValid) {
         return NextResponse.json({ error: "Credenciais inválidas" }, { status: 401 });
       }
+
+      if (user.twoFactorMethod === "NONE") {
+        return NextResponse.json({ success: true, requires2FA: false });
+      }
+
+      if (user.twoFactorMethod === "APP") {
+        return NextResponse.json({ success: true, requires2FA: true, method: "APP" });
+      }
     }
 
     // Generate 6-digit OTP
@@ -91,7 +99,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Erro ao enviar e-mail" }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, message: "Código enviado" });
+    return NextResponse.json({ success: true, requires2FA: true, method: "EMAIL", message: "Código enviado" });
 
   } catch (error) {
     console.error("OTP Error:", error);

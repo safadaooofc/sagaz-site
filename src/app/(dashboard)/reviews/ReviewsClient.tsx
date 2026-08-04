@@ -1,7 +1,7 @@
 "use client";
 
 import { Star, ThumbsUp, ChevronDown, X, Upload } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Review = {
   id: string | number;
@@ -24,6 +24,11 @@ import { useRouter } from 'next/navigation';
 
 export default function ReviewsClient({ serverReviews }: { serverReviews: Review[] }) {
   const [reviews, setReviews] = useState<Review[]>(serverReviews);
+
+  useEffect(() => {
+    setReviews(serverReviews);
+  }, [serverReviews]);
+
   const [filterStar, setFilterStar] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState<"recent" | "helpful">("recent");
   const [isSortOpen, setIsSortOpen] = useState(false);

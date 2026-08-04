@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { User, Key, Shield, MessageSquare, CheckCircle2, AlertCircle, Copy, Check, Loader2 } from "lucide-react";
-import { changePassword, logoutOtherDevices, linkDiscord, sendDiscordVerificationCode, verifyDiscordCode, checkBooster } from "./actions";
+import { useState, useEffect } from "react";
+import { User, Key, Shield, MessageSquare, CheckCircle2, AlertCircle, Copy, Check, Loader2, Smartphone, Mail, Lock } from "lucide-react";
+import { changePassword, logoutOtherDevices, checkBooster } from "./actions";
+import { generate2FASecret, verifyAndEnableApp2FA, change2FAMethod } from "./2fa-actions";
+import { signIn } from "next-auth/react";
 
 import { toast } from "sonner";
 
@@ -18,11 +20,17 @@ export function SettingsClient({ user, stats }: any) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
   
+  // 2FA State
+  const [twoFactorMethod, setTwoFactorMethod] = useState(user.twoFactorMethod || "EMAIL");
+  const [setup2FA, setSetup2FA] = useState(false);
+  const [qrCodeData, setQrCodeData] = useState("");
+  const [secret2FA, setSecret2FA] = useState("");
+  const [code2FA, setCode2FA] = useState("");
+  const [isVerifying2FA, setIsVerifying2FA] = useState(false);
+  
   // Discord
   const [discordId, setDiscordId] = useState(user.discordId || "");
-  const [verificationCode, setVerificationCode] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
-  const [showCodeInput, setShowCodeInput] = useState(false);
   
   const handleUpdatePassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -47,29 +55,58 @@ export function SettingsClient({ user, stats }: any) {
     }
   };
 
-  const handleSendCode = async () => {
-    if (!discordId) return;
-    setIsVerifying(true);
-    const res = await sendDiscordVerificationCode(discordId);
-    setIsVerifying(false);
-    if (res.success) {
-      setShowCodeInput(true);
-      toast.error("Código enviado para sua DM no Discord!");
+  const handleBeginApp2FA = async () => {
+    setIsVerifying2FA(true);
+    const res = await generate2FASecret();
+    setIsVerifying2FA(false);
+    if (res.success && res.secret && res.qrCodeDataUrl) {
+      setSecret2FA(res.secret);
+      setQrCodeData(res.qrCodeDataUrl);
+      setSetup2FA(true);
     } else {
-      toast.error(res.error || "Erro ao enviar código. Seu ID está correto e DMs estão abertas?");
+      toast.error(res.error || "Erro ao gerar 2FA.");
     }
   };
 
-  const handleVerifyCode = async () => {
-    if (!verificationCode) return;
-    setIsVerifying(true);
-    const res = await verifyDiscordCode(discordId, verificationCode);
-    setIsVerifying(false);
+  const handleConfirmApp2FA = async () => {
+    if (!currentPassword) {
+      toast.error("Digite sua senha atual para confirmar.");
+      return;
+    }
+    if (code2FA.length !== 6) {
+      toast.error("Código deve ter 6 dígitos.");
+      return;
+    }
+    setIsVerifying2FA(true);
+    const res = await verifyAndEnableApp2FA(secret2FA, code2FA, currentPassword);
+    setIsVerifying2FA(false);
+    
     if (res.success) {
-      toast.success("Discord verificado com sucesso!");
-      window.location.reload();
+      toast.success("Autenticador configurado com sucesso!");
+      setTwoFactorMethod("APP");
+      setSetup2FA(false);
+      setCurrentPassword("");
+      setCode2FA("");
     } else {
-      toast.error(res.error || "Código inválido.");
+      toast.error(res.error || "Erro ao ativar.");
+    }
+  };
+
+  const handleChangeMethod = async (method: "NONE" | "EMAIL") => {
+    if (!currentPassword) {
+      toast.error("Digite sua senha atual para confirmar a mudança de segurança.");
+      return;
+    }
+    setIsVerifying2FA(true);
+    const res = await change2FAMethod(method, currentPassword);
+    setIsVerifying2FA(false);
+    
+    if (res.success) {
+      toast.success(`Método de 2FA alterado para ${method === "NONE" ? "Nenhum" : "E-mail"}`);
+      setTwoFactorMethod(method);
+      setCurrentPassword("");
+    } else {
+      toast.error(res.error || "Erro ao alterar.");
     }
   };
 
@@ -160,6 +197,86 @@ export function SettingsClient({ user, stats }: any) {
                   </button>
                 </div>
               </div>
+              <div className="bg-[#181a20] border border-[#262933] rounded-xl p-6">
+                <h2 className="text-lg font-bold text-white mb-2">Autenticação em Duas Etapas (2FA)</h2>
+                <p className="text-sm text-[#9ca3af] mb-4">Adicione uma camada extra de segurança à sua conta.</p>
+
+                <div className="space-y-4">
+                  <div className="flex flex-col gap-3">
+                    <button 
+                      onClick={() => twoFactorMethod !== "EMAIL" ? handleChangeMethod("EMAIL") : null}
+                      className={`w-full flex items-center justify-between p-4 border rounded-lg transition-colors ${twoFactorMethod === "EMAIL" ? "bg-[#eab308]/10 border-[#eab308]" : "bg-[#1f2229] border-[#333845] hover:border-white"}`}
+                    >
+                      <div className="flex items-center gap-3 text-left">
+                        <Mail className={twoFactorMethod === "EMAIL" ? "text-[#eab308]" : "text-[#9ca3af]"} />
+                        <div>
+                          <p className={`font-bold text-sm ${twoFactorMethod === "EMAIL" ? "text-white" : "text-[#9ca3af]"}`}>Código por E-mail (Padrão)</p>
+                          <p className="text-xs text-[#6b7280]">Receba um código no seu e-mail ao logar.</p>
+                        </div>
+                      </div>
+                      {twoFactorMethod === "EMAIL" && <CheckCircle2 className="text-[#eab308]" />}
+                    </button>
+
+                    <button 
+                      onClick={() => twoFactorMethod !== "APP" ? handleBeginApp2FA() : null}
+                      className={`w-full flex items-center justify-between p-4 border rounded-lg transition-colors ${twoFactorMethod === "APP" ? "bg-blue-500/10 border-blue-500" : "bg-[#1f2229] border-[#333845] hover:border-white"}`}
+                    >
+                      <div className="flex items-center gap-3 text-left">
+                        <Smartphone className={twoFactorMethod === "APP" ? "text-blue-500" : "text-[#9ca3af]"} />
+                        <div>
+                          <p className={`font-bold text-sm ${twoFactorMethod === "APP" ? "text-white" : "text-[#9ca3af]"}`}>Aplicativo Authenticator</p>
+                          <p className="text-xs text-[#6b7280]">Use o Google Authenticator ou Authy.</p>
+                        </div>
+                      </div>
+                      {twoFactorMethod === "APP" && <CheckCircle2 className="text-blue-500" />}
+                    </button>
+
+                    <button 
+                      onClick={() => twoFactorMethod !== "NONE" ? handleChangeMethod("NONE") : null}
+                      className={`w-full flex items-center justify-between p-4 border rounded-lg transition-colors ${twoFactorMethod === "NONE" ? "bg-red-500/10 border-red-500" : "bg-[#1f2229] border-[#333845] hover:border-white"}`}
+                    >
+                      <div className="flex items-center gap-3 text-left">
+                        <Lock className={twoFactorMethod === "NONE" ? "text-red-500" : "text-[#9ca3af]"} />
+                        <div>
+                          <p className={`font-bold text-sm ${twoFactorMethod === "NONE" ? "text-white" : "text-[#9ca3af]"}`}>Sem 2FA (Inseguro)</p>
+                          <p className="text-xs text-[#6b7280]">Logar apenas com senha.</p>
+                        </div>
+                      </div>
+                      {twoFactorMethod === "NONE" && <CheckCircle2 className="text-red-500" />}
+                    </button>
+                  </div>
+
+                  {setup2FA && (
+                    <div className="p-4 bg-[#1f2229] border border-[#333845] rounded-lg mt-4 animate-in fade-in">
+                      <p className="text-sm text-white font-bold mb-2">Configure seu Authenticator</p>
+                      <p className="text-xs text-[#9ca3af] mb-4">1. Escaneie o QR Code abaixo usando seu aplicativo.</p>
+                      <div className="bg-white p-2 w-max rounded-lg mb-4">
+                        <img src={qrCodeData} alt="QR Code 2FA" className="w-32 h-32" />
+                      </div>
+                      <p className="text-xs text-[#9ca3af] mb-4">2. Digite sua senha e o código gerado no app para confirmar.</p>
+                      <div className="space-y-3">
+                        <input type="password" placeholder="Sua senha atual" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="w-full bg-[#0f1115] border border-[#262933] rounded-lg px-4 py-2.5 text-white" />
+                        <input type="text" placeholder="Código de 6 dígitos" value={code2FA} onChange={e => setCode2FA(e.target.value)} maxLength={6} className="w-full bg-[#0f1115] border border-[#262933] rounded-lg px-4 py-2.5 text-white font-mono tracking-widest text-center" />
+                        <div className="flex gap-2">
+                          <button onClick={handleConfirmApp2FA} disabled={isVerifying2FA} className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg text-sm">
+                            Confirmar
+                          </button>
+                          <button onClick={() => setSetup2FA(false)} className="px-4 text-[#9ca3af] hover:text-white border border-[#333845] rounded-lg text-sm">
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {!setup2FA && (
+                    <div className="mt-4 pt-4 border-t border-[#262933]">
+                      <p className="text-xs text-[#9ca3af] mb-2">Para alterar a segurança (remover 2FA ou voltar pro e-mail), digite sua senha atual nos inputs acima e clique na opção desejada.</p>
+                      <input type="password" placeholder="Sua senha atual" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="w-full bg-[#0f1115] border border-[#262933] rounded-lg px-4 py-2.5 text-white" />
+                    </div>
+                  )}
+                </div>
+              </div>
 
               <div className="bg-[#181a20] border border-[#262933] rounded-xl p-6">
                 <h2 className="text-lg font-bold text-white mb-2">Sessões Ativas</h2>
@@ -191,58 +308,17 @@ export function SettingsClient({ user, stats }: any) {
                 </div>
 
                 {!user.discordId ? (
-                  !showCodeInput ? (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-[#9ca3af] mb-1.5">Seu ID do Discord</label>
-                        <input 
-                          type="text" 
-                          placeholder="Ex: 123456789012345678" 
-                          value={discordId}
-                          onChange={e => setDiscordId(e.target.value)}
-                          className="w-full bg-[#1f2229] border border-[#333845] rounded-lg px-4 py-2.5 text-white focus:border-[#5865F2] focus:outline-none transition-colors" 
-                        />
-                        <p className="text-xs text-[#6b7280] mt-1.5 flex items-center gap-1">
-                          <AlertCircle size={12} /> Ative as DMs para receber o código.
-                        </p>
-                      </div>
-                      <button 
-                        onClick={handleSendCode} 
-                        disabled={isVerifying}
-                        className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-sm px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2"
-                      >
-                        {isVerifying ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enviar Código"}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-4 p-4 border border-[#5865F2]/30 bg-[#5865F2]/5 rounded-lg">
-                      <div>
-                        <label className="block text-sm font-medium text-[#9ca3af] mb-1.5">Código de Verificação</label>
-                        <input 
-                          type="text" 
-                          placeholder="Digite o código recebido na DM" 
-                          value={verificationCode}
-                          onChange={e => setVerificationCode(e.target.value)}
-                          className="w-full bg-[#1f2229] border border-[#333845] rounded-lg px-4 py-2.5 text-white focus:border-[#5865F2] focus:outline-none transition-colors text-center font-mono tracking-widest" 
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={handleVerifyCode} 
-                          disabled={isVerifying}
-                          className="flex-1 bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-sm py-2.5 rounded-lg transition-colors flex justify-center items-center gap-2"
-                        >
-                          {isVerifying ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verificar"}
-                        </button>
-                        <button 
-                          onClick={() => setShowCodeInput(false)} 
-                          className="px-4 border border-[#333845] text-[#9ca3af] hover:text-white rounded-lg transition-colors"
-                        >
-                          Cancelar
-                        </button>
-                      </div>
-                    </div>
-                  )
+                  <div className="space-y-4">
+                    <p className="text-sm text-[#9ca3af]">
+                      Conecte sua conta do Discord e entre automaticamente no nosso servidor para liberar acesso a benefícios e drops!
+                    </p>
+                    <button 
+                      onClick={() => signIn("discord", { callbackUrl: "/settings" })} 
+                      className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-sm px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-3 w-full sm:w-auto"
+                    >
+                      <MessageSquare size={18} /> Conectar com Discord
+                    </button>
+                  </div>
                 ) : (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 bg-[#1f2229] border border-[#333845] rounded-lg">

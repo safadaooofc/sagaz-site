@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [method2FA, setMethod2FA] = useState("EMAIL");
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const handleSendOtp = async (e: React.FormEvent) => {
@@ -33,7 +34,26 @@ export default function LoginPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erro ao solicitar código");
       
-      setSuccess("Código enviado com sucesso para o seu e-mail!");
+      if (data.requires2FA === false) {
+        // Direct login
+        const resLogin = await signIn("credentials", {
+          email,
+          password,
+          code: "NONE",
+          redirect: false,
+        });
+        if (resLogin?.error) throw new Error(resLogin.error);
+        router.push("/dashboard");
+        router.refresh();
+        return;
+      }
+
+      setMethod2FA(data.method || "EMAIL");
+      if (data.method === "APP") {
+        setSuccess("Abra seu aplicativo Authenticator e digite o código.");
+      } else {
+        setSuccess("Código enviado com sucesso para o seu e-mail!");
+      }
       setStep(2);
     } catch (err: any) {
       setError(err.message);
@@ -129,7 +149,7 @@ export default function LoginPage() {
             </h1>
             <p className="text-[#a1a1aa] text-sm">
               {step === 1 && "Entre com suas credenciais para acessar"}
-              {step === 2 && "Digite o código enviado ao seu e-mail"}
+              {step === 2 && (method2FA === "APP" ? "Digite o código do seu Authenticator" : "Digite o código enviado ao seu e-mail")}
               {step === 3 && "Digite seu e-mail para enviarmos um código"}
               {step === 4 && "Insira o código e defina sua nova senha"}
             </p>
