@@ -163,7 +163,7 @@ export default async function DashboardPage() {
           data: {
             userId: session.user.id,
             title: "Vincule seu Discord!",
-            message: "Conecte sua conta do Discord na aba Configurações para resgatar compras e usar os Drops.",
+            message: "Conecte sua conta do Discord na aba Configurações para resgatar compras.",
             type: "info"
           }
         });
