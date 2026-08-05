@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { MinesStatusProvider } from "@/components/MinesStatusProvider";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -47,15 +48,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }
   }
 
+  const minesConfig = await prisma.systemConfig.findUnique({
+    where: { key: "mines_active" }
+  });
+  const initialMinesActive = minesConfig?.value === "true";
+
   return (
-    <div className="flex h-screen w-full overflow-hidden">
-      <Sidebar user={session?.user as any} />
-      <div className="flex flex-col flex-1 overflow-hidden w-full">
-        <Topbar />
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
-          {children}
-        </main>
+    <MinesStatusProvider initialIsActive={initialMinesActive}>
+      <div className="flex h-screen w-full overflow-hidden">
+        <Sidebar user={session?.user as any} />
+        <div className="flex flex-col flex-1 overflow-hidden w-full">
+          <Topbar />
+          <main className="flex-1 overflow-y-auto p-4 md:p-8">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </MinesStatusProvider>
   );
 }

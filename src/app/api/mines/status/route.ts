@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const config = await prisma.adminConfig.findUnique({
+    const config = await prisma.systemConfig.findUnique({
       where: { key: "mines_active" }
     });
     const isActive = config?.value === "true";

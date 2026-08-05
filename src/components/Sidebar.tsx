@@ -4,9 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Wallet, CreditCard, Key, Users, Gift, Star, Settings, HelpCircle, MessageSquare, Bomb, RefreshCw } from "lucide-react";
 import { UserMenu } from "./UserMenu";
+import { useMinesStatus } from "./MinesStatusProvider";
 
 export function Sidebar({ user }: { user?: any }) {
   const pathname = usePathname();
+  const { isActive: minesActive } = useMinesStatus();
 
   const getLinkClass = (path: string) => {
     const isActive = pathname === path;
@@ -52,9 +54,11 @@ export function Sidebar({ user }: { user?: any }) {
               <Users size={16} />
               Indicação
             </Link>
-            <Link href="/mines" className={getLinkClass("/mines")}>
-              <Bomb size={20} className={pathname.includes('/mines') ? 'text-red-500' : 'text-[#6b7280]'} /> Mines
-            </Link>
+            {minesActive && (
+              <Link href="/mines" className={getLinkClass("/mines")}>
+                <Bomb size={20} className={pathname.includes('/mines') ? 'text-red-500' : 'text-[#6b7280]'} /> Mines
+              </Link>
+            )}
             <Link href="/reviews" className={getLinkClass("/reviews")}>
               <Star size={16} />
               Avaliações
