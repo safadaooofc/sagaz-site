@@ -226,15 +226,19 @@ export default function RegisterPage() {
         <div className="absolute top-[40%] left-[50%] w-[300px] h-[300px] rounded-full bg-purple-900/5 blur-[80px]" />
         
         {/* Credit Cards Illustration */}
-        <div className="relative w-full max-w-lg aspect-square perspective-[1500px] flex items-center j          {/* Back Card (Static) - Platinum Style */}
-          <div className="absolute w-80 h-48 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 rounded-2xl border border-gray-400 shadow-[0_30px_60px_rgba(30,27,75,0.6)] transform -rotate-12 translate-x-[-15%] translate-y-[15%] p-5 flex flex-col justify-between backdrop-blur-md z-10 transition-transform duration-700">
-            <div className="absolute inset-1 border border-gray-400/40 rounded-xl pointer-events-none" />
-            <div className="flex justify-between items-start relative z-10">
-              <div className="w-10 h-7 rounded-md bg-gradient-to-br from-yellow-100 to-yellow-500 border border-yellow-600/30 opacity-80 shadow-sm" />
-              <div className="text-[11px] font-black text-gray-800 tracking-[0.2em] uppercase">Sagaz Express</div>
-            </div>
-            <div className="space-y-4 relative z-10">
-              <div className="text-gray-800 font-mono tracking-[0.15em] text-base font-semibold drop-shadow-sm">3759 876543 21001</div>
+        <div className="relative w-full max-w-lg aspect-square perspective-[1500px] flex items-center justify-center">
+          
+          {/* Back Card Wrapper */}
+          <div className="absolute inset-0 flex items-center justify-center animate-float-delayed pointer-events-none">
+            {/* Back Card (Static) - Platinum Style */}
+            <div className="absolute w-80 h-48 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 rounded-2xl border border-gray-400 shadow-[0_30px_60px_rgba(30,27,75,0.6)] transform -rotate-12 translate-x-[-15%] translate-y-[15%] p-5 flex flex-col justify-between backdrop-blur-md z-10 transition-transform duration-700">
+              <div className="absolute inset-1 border border-gray-400/40 rounded-xl pointer-events-none" />
+              <div className="flex justify-between items-start relative z-10">
+                <div className="w-10 h-7 rounded-md bg-gradient-to-br from-yellow-100 to-yellow-500 border border-yellow-600/30 opacity-80 shadow-sm" />
+                <div className="text-[11px] font-black text-gray-800 tracking-[0.2em] uppercase">Sagaz Express</div>
+              </div>
+              <div className="space-y-4 relative z-10">
+                <div className="text-gray-800 font-mono tracking-[0.15em] text-base font-semibold drop-shadow-sm">3759 876543 21001</div>
               <div className="flex justify-between text-[9px] text-gray-700 uppercase tracking-widest font-bold">
                 <div className="flex flex-col">
                   <span className="text-[7px] text-gray-500 leading-none mb-1">Member Since</span>
@@ -247,15 +251,17 @@ export default function RegisterPage() {
               </div>
             </div>
           </div>
-          
-          {/* Front Card (Flipping) - Black Card Style */}
-          <div className={`absolute w-80 h-48 z-20 transition-all duration-700 [transform-style:preserve-3d] ${
-            isPasswordFocused 
-              ? 'translate-x-[15%] translate-y-[-15%] [transform:rotateY(180deg)_rotateZ(0deg)_scale(1.1)] shadow-[0_40px_80px_rgba(0,0,0,0.9)]'
-              : 'translate-x-[15%] translate-y-[-15%] [transform:rotateY(0deg)_rotateZ(12deg)] hover:rotate-6 hover:scale-105 shadow-[0_30px_60px_rgba(0,0,0,0.8)]'
-          }`}>
-            
-            {/* Front Side */}
+
+          {/* Front Card Wrapper */}
+          <div className="absolute inset-0 flex items-center justify-center animate-float pointer-events-none">
+            {/* Front Card (Flipping) - Black Card Style */}
+            <div className={`absolute w-80 h-48 z-20 transition-all duration-700 [transform-style:preserve-3d] pointer-events-auto ${
+              isPasswordFocused 
+                ? 'translate-x-[15%] translate-y-[-15%] [transform:rotateY(180deg)_rotateZ(0deg)_scale(1.1)] shadow-[0_40px_80px_rgba(0,0,0,0.9)]'
+                : 'translate-x-[15%] translate-y-[-15%] [transform:rotateY(0deg)_rotateZ(12deg)] hover:rotate-6 hover:scale-105 shadow-[0_30px_60px_rgba(0,0,0,0.8)]'
+            }`}>
+              
+              {/* Front Side */}
             <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] bg-gradient-to-br from-zinc-900 via-black to-zinc-900 rounded-2xl border border-zinc-700 p-5 flex flex-col justify-between backdrop-blur-md">
               <div className="absolute inset-1 border-2 border-dashed border-zinc-600/30 rounded-xl pointer-events-none" />
               <div className="absolute inset-1.5 border border-zinc-700/50 rounded-lg pointer-events-none" />
@@ -295,10 +301,7 @@ export default function RegisterPage() {
                 Sagaz Express - Authorized Signature
               </div>
             </div>
-          </div>d Signature
-              </div>
-            </div>
-
+            
           </div>
         </div>
       </div>
