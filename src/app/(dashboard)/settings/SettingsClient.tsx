@@ -303,14 +303,14 @@ export function SettingsClient({ user, stats }: any) {
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-white leading-none mb-1">Verificação Discord</h2>
-                    <p className="text-sm text-[#9ca3af]">Vincule seu Discord para receber cargos e drops exclusivos.</p>
+                    <p className="text-sm text-[#9ca3af]">Vincule seu Discord para maior segurança na sua conta.</p>
                   </div>
                 </div>
 
                 {!user.discordId ? (
                   <div className="space-y-4">
                     <p className="text-sm text-[#9ca3af]">
-                      Conecte sua conta do Discord e entre automaticamente no nosso servidor para liberar acesso a benefícios e drops!
+                      Conecte sua conta do Discord e entre automaticamente no nosso servidor para liberar acesso a benefícios exclusivos!
                     </p>
                     <button 
                       onClick={() => signIn("discord", { callbackUrl: "/settings" })} 

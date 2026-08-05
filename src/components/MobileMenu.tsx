@@ -76,9 +76,7 @@ export function MobileMenu() {
               <Link href="/referrals" onClick={closeMenu} className={getLinkClass("/referrals")}>
                 <Users size={16} /> Indicação
               </Link>
-              <Link href="/drops" onClick={closeMenu} className={getLinkClass("/drops")}>
-                <Gift size={16} /> Drops
-              </Link>
+
               <Link href="/reviews" onClick={closeMenu} className={getLinkClass("/reviews")}>
                 <Star size={16} /> Avaliações
               </Link>

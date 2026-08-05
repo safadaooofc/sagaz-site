@@ -7,7 +7,7 @@ export function DiscordBanner() {
         <MessageSquare size={20} className="text-[#eab308]" />
         <div className="flex items-center gap-2 text-sm">
           <span className="font-bold text-[#eab308]">Discord não vinculado</span>
-          <span className="text-[#9ca3af]">Vincule seu Discord para ter acesso a drops gratuitos e maior segurança na sua conta</span>
+          <span className="text-[#9ca3af]">Vincule seu Discord para maior segurança na sua conta e acesso a benefícios exclusivos</span>
         </div>
       </div>
       <div className="flex items-center gap-4">

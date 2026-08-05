@@ -95,7 +95,7 @@ export function MarketingClient({ rewardCodes, products }: { rewardCodes: any[],
           <h1 className="text-3xl font-black text-white mb-2 flex items-center gap-3">
             <Gift className="text-fuchsia-400" /> Sistema Supremo de Benefícios
           </h1>
-          <p className="text-[#9ca3af]">Crie Drops e Cupons dinâmicos com saldo, produtos ou boosts de recarga.</p>
+          <p className="text-[#9ca3af]">Crie Cupons dinâmicos com saldo, produtos ou boosts de recarga.</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
@@ -159,7 +159,7 @@ export function MarketingClient({ rewardCodes, products }: { rewardCodes: any[],
         ))}
         {rewardCodes.length === 0 && (
           <div className="col-span-full py-12 text-center border border-dashed border-[#262933] rounded-xl text-[#6b7280]">
-            Nenhum código ou drop ativo no momento.
+            Nenhum código ativo no momento.
           </div>
         )}
       </div>
@@ -171,7 +171,7 @@ export function MarketingClient({ rewardCodes, products }: { rewardCodes: any[],
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-fuchsia-500 to-cyan-500"></div>
             
             <form onSubmit={handleCreate} className="p-6">
-              <h2 className="text-2xl font-black text-white mb-6">Novo Drop/Cupom</h2>
+              <h2 className="text-2xl font-black text-white mb-6">Novo Cupom / Código</h2>
               
               <div className="space-y-4">
                 <div>
@@ -207,7 +207,7 @@ export function MarketingClient({ rewardCodes, products }: { rewardCodes: any[],
                     className="w-full bg-[#0f1115] border border-[#262933] rounded-lg px-4 py-3 text-white outline-none focus:border-fuchsia-500 transition-colors"
                   >
                     <option value="BALANCE">💳 Saldo na Carteira (Gift)</option>
-                    <option value="PRODUCT">📦 Produto Grátis (Drop)</option>
+                    <option value="PRODUCT">📦 Produto Grátis</option>
                     <option value="RECHARGE_BONUS">⚡ Bônus de Recarga (Boost)</option>
                     <option value="DISCOUNT">🏷️ Cupom de Desconto (%)</option>
                   </select>
@@ -273,7 +273,7 @@ export function MarketingClient({ rewardCodes, products }: { rewardCodes: any[],
                   disabled={isLoading}
                   className="flex-1 py-3 px-4 rounded-lg font-bold text-white bg-fuchsia-600 hover:bg-fuchsia-500 transition-colors disabled:opacity-50"
                 >
-                  {isLoading ? "Criando..." : "Criar Drop Supremo"}
+                  {isLoading ? "Criando..." : "Criar Supremo"}
                 </button>
               </div>
             </form>

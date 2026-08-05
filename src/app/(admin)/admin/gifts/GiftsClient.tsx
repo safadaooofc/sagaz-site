@@ -91,7 +91,7 @@ export function GiftsClient({ gifts, products }: { gifts: any[], products: any[]
           onClick={() => router.push('/admin/marketing')}
           className="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-6 rounded-lg flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)]"
         >
-          <Plus size={18} /> Criar Novo (Via Drops)
+          <Plus size={18} /> Criar Novo
         </button>
       </div>
 

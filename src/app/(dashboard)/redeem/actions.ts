@@ -68,7 +68,7 @@ export async function redeemGift(code: string) {
           break;
 
         case 'PRODUCT':
-          if (!reward.productId) throw new Error("Produto não configurado neste drop");
+          if (!reward.productId) throw new Error("Produto não configurado neste código");
           
           const product = await tx.product.findUnique({ where: { id: reward.productId } });
           if (!product) throw new Error("Produto não encontrado");
@@ -114,7 +114,7 @@ export async function redeemGift(code: string) {
               userId: user.id,
               amount: bonusAmount,
               type: "GIFT_REDEEM_BONUS",
-              description: `Drop de Bônus Resgatado: ${reward.code}`
+              description: `Bônus Resgatado: ${reward.code}`
             }
           });
 

@@ -31,29 +31,3 @@ export async function createBalanceGift(formData: FormData) {
   revalidatePath("/admin/gifts");
 }
 
-export async function createProductDrop(formData: FormData) {
-  const session = await auth();
-  const userRole = (session?.user as any)?.role;
-  
-  if (userRole !== "ADMIN" && userRole !== "SUPERADMIN" && userRole !== "OWNER") {
-    throw new Error("Não autorizado");
-  }
-
-  const code = formData.get("code") as string;
-  const productId = formData.get("productId") as string;
-  const maxUses = parseInt(formData.get("maxUses") as string);
-
-  if (!code || !productId || isNaN(maxUses)) {
-    throw new Error("Dados inválidos");
-  }
-
-  await prisma.dropCode.create({
-    data: {
-      code: code.toUpperCase(),
-      productId,
-      maxUses,
-    }
-  });
-
-  revalidatePath("/admin/gifts");
-}
