@@ -52,9 +52,6 @@ export function Sidebar({ user }: { user?: any }) {
               <Users size={16} />
               Indicação
             </Link>
-            <Link href="/drops" className={getLinkClass("/drops")}>
-              <Gift size={20} className={pathname.includes('/drops') ? 'text-[#eab308]' : 'text-[#6b7280]'} /> Drops
-            </Link>
             <Link href="/mines" className={getLinkClass("/mines")}>
               <Bomb size={20} className={pathname.includes('/mines') ? 'text-red-500' : 'text-[#6b7280]'} /> Mines
             </Link>
