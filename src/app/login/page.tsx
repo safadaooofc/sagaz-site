@@ -171,13 +171,13 @@ export default function LoginPage() {
             <form className="space-y-4" onSubmit={handleSendOtp}>
               <div>
                 <input 
-                  type="email" 
+                  type="text" 
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onFocus={() => setIsPasswordFocused(false)}
                   className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-4 py-3 text-white placeholder-[#52525b] focus:outline-none focus:border-[#52525b] focus:ring-1 focus:ring-[#52525b] transition-all"
-                  placeholder="E-mail"
+                  placeholder="E-mail ou Usuário"
                 />
               </div>
               <div>

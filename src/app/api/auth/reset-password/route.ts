@@ -10,7 +10,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({ 
+      where: { 
+        OR: [
+          { email: email },
+          { name: email }
+        ]
+      } 
+    });
 
     if (!user || user.resetPasswordToken !== code) {
       return NextResponse.json({ error: "Código inválido" }, { status: 400 });

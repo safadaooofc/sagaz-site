@@ -31,8 +31,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const { email, password, code, isRegister, name, inviteCode } = credentials;
 
         // Handle Login
-        const user = await prisma.user.findUnique({
-          where: { email: email as string }
+        const user = await prisma.user.findFirst({
+          where: { 
+            OR: [
+              { email: email as string },
+              { name: email as string }
+            ]
+          }
         });
 
         if (!user) {
@@ -77,6 +82,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         // Handle Registration
         if (isRegister === "true") {
+          if (name) {
+            const nameExists = await prisma.user.findFirst({ where: { name: name as string } });
+            if (nameExists) throw new Error("Este nome de usuário já está em uso");
+          }
+
           const hashedPassword = await bcrypt.hash(password as string, 10);
           
           let referredById = null;

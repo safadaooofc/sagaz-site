@@ -7,10 +7,17 @@ export async function POST(req: Request) {
     const { email } = await req.json();
 
     if (!email) {
-      return NextResponse.json({ error: "E-mail obrigatório" }, { status: 400 });
+      return NextResponse.json({ error: "E-mail ou Usuário obrigatório" }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({ 
+      where: { 
+        OR: [
+          { email: email },
+          { name: email }
+        ]
+      } 
+    });
 
     if (!user) {
       // Por segurança, não indicamos se o e-mail existe ou não
@@ -29,7 +36,11 @@ export async function POST(req: Request) {
       },
     });
 
-    const emailRes = await sendResetCodeEmail(email, code);
+    if (!user.email) {
+      return NextResponse.json({ error: "Usuário sem e-mail cadastrado" }, { status: 400 });
+    }
+    
+    const emailRes = await sendResetCodeEmail(user.email, code);
 
     if (!emailRes.success) {
       console.error(emailRes.error);

@@ -17,14 +17,15 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { email, password, isRegister } = body;
+    const { name, email, password, isRegister } = body;
 
     // Backend Validations
     if (!email || typeof email !== 'string') {
-      return NextResponse.json({ error: "E-mail é obrigatório" }, { status: 400 });
+      return NextResponse.json({ error: "E-mail ou Usuário é obrigatório" }, { status: 400 });
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    
+    if (isRegister && !emailRegex.test(email)) {
       return NextResponse.json({ error: "E-mail inválido" }, { status: 400 });
     }
 
@@ -35,13 +36,33 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "A senha deve ter pelo menos 6 caracteres" }, { status: 400 });
     }
 
+    let actualEmail = email;
+
     if (isRegister) {
+      if (name) {
+        const nameExists = await prisma.user.findFirst({ where: { name } });
+        if (nameExists) {
+          return NextResponse.json({ error: "Este nome de usuário já está em uso" }, { status: 400 });
+        }
+      }
+
       const existing = await prisma.user.findUnique({ where: { email } });
       if (existing) {
         return NextResponse.json({ error: "Este e-mail já está em uso" }, { status: 400 });
       }
     } else {
-      const user = await prisma.user.findUnique({ where: { email } });
+      const user = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { email: email },
+            { name: email }
+          ]
+        }
+      });
+      if (!user || !user.password || !user.email) {
+        return NextResponse.json({ error: "Credenciais inválidas" }, { status: 401 });
+      }
+      actualEmail = user.email; // Use the real email for sending OTP
       if (!user || !user.password) {
         return NextResponse.json({ error: "Credenciais inválidas" }, { status: 401 });
       }
@@ -64,9 +85,9 @@ export async function POST(req: Request) {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     
     // Clear old codes and save new one
-    await prisma.otpCode.deleteMany({ where: { email } });
+    await prisma.otpCode.deleteMany({ where: { email: actualEmail } });
     await prisma.otpCode.create({
-      data: { email, code, expiresAt: new Date(Date.now() + 10 * 60 * 1000) }
+      data: { email: actualEmail, code, expiresAt: new Date(Date.now() + 10 * 60 * 1000) }
     });
 
     // Send email using Resend with a premium dark-mode HTML template
@@ -89,7 +110,7 @@ export async function POST(req: Request) {
 
     const { data, error } = await resend.emails.send({
       from: 'KNIGHT <onboarding@resend.dev>', // Change onboarding@resend.dev to your verified domain later
-      to: [email],
+      to: [actualEmail],
       subject: `Seu código de verificação é ${code}`,
       html: emailHtml,
     });
