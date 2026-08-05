@@ -226,24 +226,29 @@ export default function RegisterPage() {
         <div className="absolute top-[40%] left-[50%] w-[300px] h-[300px] rounded-full bg-purple-900/5 blur-[80px]" />
         
         {/* Credit Cards Illustration */}
-        <div className="relative w-full max-w-lg aspect-square perspective-[1500px] flex items-center justify-center">
-          
-          {/* Back Card (Static) */}
-          <div className="absolute w-80 h-48 bg-gradient-to-br from-slate-800 to-indigo-950 rounded-2xl border border-indigo-500/20 shadow-[0_30px_60px_rgba(30,27,75,0.6)] transform -rotate-12 translate-x-[-15%] translate-y-[15%] p-6 flex flex-col justify-between backdrop-blur-md z-10 transition-transform duration-700">
-            <div className="flex justify-between items-start">
-              <div className="w-12 h-8 bg-slate-300/20 rounded-md" />
-              <Wifi className="w-7 h-7 text-white/40 rotate-90" />
+        <div className="relative w-full max-w-lg aspect-square perspective-[1500px] flex items-center j          {/* Back Card (Static) - Platinum Style */}
+          <div className="absolute w-80 h-48 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 rounded-2xl border border-gray-400 shadow-[0_30px_60px_rgba(30,27,75,0.6)] transform -rotate-12 translate-x-[-15%] translate-y-[15%] p-5 flex flex-col justify-between backdrop-blur-md z-10 transition-transform duration-700">
+            <div className="absolute inset-1 border border-gray-400/40 rounded-xl pointer-events-none" />
+            <div className="flex justify-between items-start relative z-10">
+              <div className="w-10 h-7 rounded-md bg-gradient-to-br from-yellow-100 to-yellow-500 border border-yellow-600/30 opacity-80 shadow-sm" />
+              <div className="text-[11px] font-black text-gray-800 tracking-[0.2em] uppercase">Sagaz Express</div>
             </div>
-            <div className="space-y-4">
-              <div className="text-white/80 font-mono tracking-[0.25em] text-base">•••• •••• •••• 4242</div>
-              <div className="flex justify-between text-[11px] text-white/50 uppercase tracking-widest font-bold">
-                <span>Sagaz Bank</span>
-                <span>12/28</span>
+            <div className="space-y-4 relative z-10">
+              <div className="text-gray-800 font-mono tracking-[0.15em] text-base font-semibold drop-shadow-sm">3759 876543 21001</div>
+              <div className="flex justify-between text-[9px] text-gray-700 uppercase tracking-widest font-bold">
+                <div className="flex flex-col">
+                  <span className="text-[7px] text-gray-500 leading-none mb-1">Member Since</span>
+                  <span>22</span>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-[7px] text-gray-500 leading-none mb-1">Valid Thru</span>
+                  <span>12/28</span>
+                </div>
               </div>
             </div>
           </div>
           
-          {/* Front Card (Flipping) */}
+          {/* Front Card (Flipping) - Black Card Style */}
           <div className={`absolute w-80 h-48 z-20 transition-all duration-700 [transform-style:preserve-3d] ${
             isPasswordFocused 
               ? 'translate-x-[15%] translate-y-[-15%] [transform:rotateY(180deg)_rotateZ(0deg)_scale(1.1)] shadow-[0_40px_80px_rgba(0,0,0,0.9)]'
@@ -251,37 +256,46 @@ export default function RegisterPage() {
           }`}>
             
             {/* Front Side */}
-            <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#09090b] rounded-2xl border border-blue-500/30 p-6 flex flex-col justify-between backdrop-blur-md">
-              <div className="flex justify-between items-start">
-                <div className="w-12 h-8 bg-slate-300/20 rounded-md" />
-                <div className="flex -space-x-3">
-                  <div className="w-8 h-8 rounded-full bg-red-500/80 mix-blend-screen shadow-inner" />
-                  <div className="w-8 h-8 rounded-full bg-yellow-500/80 mix-blend-screen shadow-inner" />
-                </div>
+            <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] bg-gradient-to-br from-zinc-900 via-black to-zinc-900 rounded-2xl border border-zinc-700 p-5 flex flex-col justify-between backdrop-blur-md">
+              <div className="absolute inset-1 border-2 border-dashed border-zinc-600/30 rounded-xl pointer-events-none" />
+              <div className="absolute inset-1.5 border border-zinc-700/50 rounded-lg pointer-events-none" />
+              
+              <div className="flex justify-between items-start relative z-10">
+                <div className="w-10 h-7 rounded-md bg-gradient-to-br from-yellow-200 to-yellow-600 border border-yellow-700/50 shadow-sm" />
+                <div className="text-[11px] font-black text-zinc-300 tracking-[0.2em] uppercase">Sagaz Express</div>
               </div>
-              <div className="space-y-4">
-                <div className="text-white/90 font-mono tracking-[0.1em] text-sm shadow-sm truncate max-w-[250px]">
+              <div className="space-y-4 relative z-10">
+                <div className="text-zinc-300 font-mono tracking-[0.1em] text-sm shadow-sm truncate max-w-[250px] drop-shadow-md">
                   {email || "seu@email.com"}
                 </div>
-                <div className="flex justify-between text-[11px] text-white/70 uppercase tracking-widest font-bold">
-                  <span className="truncate max-w-[120px]">{name || "Premium Black"}</span>
-                  <span>09/27</span>
+                <div className="flex justify-between text-[9px] text-zinc-400 uppercase tracking-widest font-bold">
+                  <div className="flex flex-col">
+                    <span className="text-[7px] text-zinc-500 leading-none mb-1">Member Since</span>
+                    <span className="truncate max-w-[120px]">{name || "Premium Black"}</span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[7px] text-zinc-500 leading-none mb-1">Valid Thru</span>
+                    <span>09/27</span>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Back Side */}
-            <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] bg-gradient-to-br from-[#09090b] via-[#1e1b4b] to-[#0f172a] rounded-2xl border border-purple-500/30 p-0 flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden">
-              <div className="w-full h-12 bg-black/90 mt-6 shadow-inner" />
+            <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] bg-gradient-to-br from-zinc-900 via-black to-zinc-900 rounded-2xl border border-zinc-700 p-0 flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.8)] overflow-hidden">
+              <div className="w-full h-12 bg-black mt-6 shadow-inner" />
               <div className="px-6 mt-4 w-full flex justify-end">
-                <div className="bg-white/90 w-full max-w-[200px] h-10 rounded-sm flex items-center justify-end px-4 overflow-hidden">
+                <div className="bg-gray-200 w-full max-w-[200px] h-10 rounded-sm flex items-center justify-end px-4 overflow-hidden border border-gray-300">
                   <span className="text-black font-mono font-bold tracking-[0.3em] text-xl transform translate-y-1">
                     {password ? "•".repeat(Math.min(password.length, 12)) : "••••••••"}
                   </span>
                 </div>
               </div>
-              <div className="px-6 mt-auto mb-4 text-[9px] text-white/30 text-right uppercase tracking-wider">
-                Authorized Signature
+              <div className="px-6 mt-auto mb-4 text-[9px] text-zinc-500 text-right uppercase tracking-wider">
+                Sagaz Express - Authorized Signature
+              </div>
+            </div>
+          </div>d Signature
               </div>
             </div>
 
