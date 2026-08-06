@@ -267,7 +267,7 @@ export default function RegisterPage() {
               <div className="flex justify-between items-start relative z-10">
                 <div className="w-10 h-7 rounded-md bg-gradient-to-br from-yellow-100 to-yellow-500 border border-yellow-600/30 opacity-80 shadow-sm" />
                 <div className="text-[11px] font-black text-gray-800 tracking-[0.2em] uppercase">
-                  Sagaz Express
+                  SAGAZzz Express
                 </div>
               </div>
               <div className="space-y-4 relative z-10">
@@ -310,7 +310,7 @@ export default function RegisterPage() {
                 <div className="flex justify-between items-start relative z-10">
                   <div className="w-10 h-7 rounded-md bg-gradient-to-br from-yellow-200 to-yellow-600 border border-yellow-700/50 shadow-sm" />
                   <div className="text-[11px] font-black text-zinc-300 tracking-[0.2em] uppercase">
-                    Sagaz Express
+                    SAGAZzz Express
                   </div>
                 </div>
                 <div className="space-y-4 relative z-10">
@@ -349,7 +349,7 @@ export default function RegisterPage() {
                   </div>
                 </div>
                 <div className="px-6 mt-auto mb-4 text-[9px] text-zinc-500 text-right uppercase tracking-wider">
-                  Sagaz Express - Authorized Signature
+                  SAGAZzz Express - Authorized Signature
                 </div>
               </div>
             </div>
