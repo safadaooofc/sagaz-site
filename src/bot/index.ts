@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Collection, Invite } from 'discord.js';
+import { Client, GatewayIntentBits, Collection, Invite, AttachmentBuilder } from 'discord.js';
 import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 
@@ -12,6 +12,8 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildInvites,
     GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
   ],
 });
 
@@ -165,5 +167,95 @@ async function handleReward(discordId: string) {
     console.error("Erro no handleReward:", err);
   }
 }
+
+// Comandos de Administração (!logs, !backup)
+client.on('messageCreate', async (message) => {
+  if (message.author.bot) return;
+  if (!message.content.startsWith('!')) return;
+
+  const args = message.content.slice(1).trim().split(/ +/);
+  const command = args.shift()?.toLowerCase();
+
+  if (command === 'logs' || command === 'backup') {
+    try {
+      // Verificar se o usuário do Discord tem conta e qual é a role dele no site
+      const user = await prisma.user.findFirst({
+        where: { discordId: message.author.id }
+      });
+
+      if (!user || (user.role !== 'OWNER' && user.role !== 'SUPERADMIN')) {
+        await message.reply("❌ Você não tem permissão de Administrador no site para executar este comando.");
+        return;
+      }
+
+      if (command === 'logs') {
+        const logsMessage = await message.reply("⏳ Buscando logs...");
+        const logs = await prisma.adminLog.findMany({
+          orderBy: { createdAt: 'desc' },
+          take: 20,
+          include: { admin: { select: { name: true } } }
+        });
+
+        if (logs.length === 0) {
+          await logsMessage.edit("Nenhum log encontrado na plataforma.");
+          return;
+        }
+
+        let logsText = "**Últimos 20 Logs de Administração**\n```\n";
+        logs.forEach(log => {
+          const date = log.createdAt.toLocaleString('pt-BR');
+          logsText += `[${date}] ${log.admin.name} (${log.action}): ${log.details}\n`;
+        });
+        logsText += "```";
+
+        try {
+          await message.author.send(logsText);
+          await logsMessage.edit("✅ Logs enviados para a sua DM com segurança!");
+        } catch (e) {
+          await logsMessage.edit("❌ Não consegui enviar na sua DM. Você a bloqueou?\n" + logsText);
+        }
+      }
+
+      if (command === 'backup') {
+        const backupMessage = await message.reply("📦 Gerando dump da base de dados. Aguarde...");
+        
+        // Puxa as tabelas vitais
+        const [users, transactions, ccProducts, loginProducts, adminLogs] = await Promise.all([
+          prisma.user.findMany(),
+          prisma.transaction.findMany(),
+          prisma.cCProduct.findMany(),
+          prisma.loginProduct.findMany(),
+          prisma.adminLog.findMany()
+        ]);
+
+        const backupData = {
+          date: new Date().toISOString(),
+          users,
+          transactions,
+          ccProducts,
+          loginProducts,
+          adminLogs
+        };
+
+        const jsonBuffer = Buffer.from(JSON.stringify(backupData, null, 2), 'utf-8');
+        const attachment = new AttachmentBuilder(jsonBuffer, { name: `sagaz_backup_${Date.now()}.json` });
+
+        try {
+          await message.author.send({
+            content: "⚠️ **BACKUP DO BANCO DE DADOS**\nEste arquivo contém dados sensíveis. Mantenha em segurança.",
+            files: [attachment]
+          });
+          await backupMessage.edit("✅ Backup gerado e enviado na sua DM com sucesso!");
+        } catch (e) {
+          await backupMessage.edit("❌ Não consegui enviar na sua DM. Por segurança, o backup não será enviado aqui no canal aberto.");
+        }
+      }
+
+    } catch (err) {
+      console.error(err);
+      await message.reply("Ocorreu um erro ao executar o comando.");
+    }
+  }
+});
 
 client.login(process.env.DISCORD_BOT_TOKEN);
