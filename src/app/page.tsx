@@ -10,7 +10,7 @@ export default async function LandingPage() {
       {/* Header */}
       <header className="border-b border-[#181a20] py-4 px-6 sm:px-12 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-8 w-auto object-contain" />
+          <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-5 w-auto object-contain" />
         </div>
         <div>
           {session ? (
@@ -68,7 +68,7 @@ export default async function LandingPage() {
       <footer className="border-t border-[#181a20] pt-16 pb-8 px-6 sm:px-12 mt-auto">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
           <div className="max-w-sm">
-            <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-8 w-auto object-contain mb-4" />
+            <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-5 w-auto object-contain mb-4" />
             <p className="text-[13px] text-[#6b7280] leading-relaxed mb-6">
               A plataforma mais confiável para compra de cartões digitais. Segurança, velocidade e qualidade garantidas.
             </p>

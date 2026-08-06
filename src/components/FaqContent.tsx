@@ -62,7 +62,7 @@ export function FaqContent({ isPublic = false }: { isPublic?: boolean }) {
       {isPublic && (
         <div className="flex justify-between items-center mb-10 pb-6 border-b border-[#1f2229]">
           <div className="flex items-center gap-3">
-            <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-10 w-auto object-contain" />
+            <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-6 w-auto object-contain" />
           </div>
           <Link href="/login" className="bg-[#eab308] text-[#0f1115] font-bold text-[13px] px-6 py-2.5 rounded-lg">
             Entrar
