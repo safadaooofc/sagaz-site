@@ -10,8 +10,7 @@ export default async function LandingPage() {
       {/* Header */}
       <header className="border-b border-[#181a20] py-4 px-6 sm:px-12 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#181a20] rounded flex items-center justify-center font-black text-white">K</div>
-          <span className="font-black text-lg text-white tracking-tight">KNIGHT</span>
+          <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-8 w-auto object-contain" />
         </div>
         <div>
           {session ? (
@@ -33,8 +32,9 @@ export default async function LandingPage() {
           <span className="text-xs text-[#9ca3af] font-medium">Cartões com qualidade <strong className="text-white">garantida</strong></span>
         </div>
 
+        <img src="/assets/images/banner-sagazzz-1.png" alt="Sagazzz Banner Promocional" className="mx-auto w-full max-w-2xl mb-8 rounded-xl" />
         <h1 className="text-6xl sm:text-8xl font-black text-white tracking-tighter mb-8">
-          KNIGHT
+          SAGAZzz
         </h1>
 
         <h2 className="text-xl sm:text-2xl text-[#9ca3af] mb-4">
@@ -68,7 +68,7 @@ export default async function LandingPage() {
       <footer className="border-t border-[#181a20] pt-16 pb-8 px-6 sm:px-12 mt-auto">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
           <div className="max-w-sm">
-            <h3 className="text-white font-black text-lg mb-4">KNIGHT</h3>
+            <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-8 w-auto object-contain mb-4" />
             <p className="text-[13px] text-[#6b7280] leading-relaxed mb-6">
               A plataforma mais confiável para compra de cartões digitais. Segurança, velocidade e qualidade garantidas.
             </p>
@@ -96,7 +96,7 @@ export default async function LandingPage() {
 
         <div className="max-w-6xl mx-auto pt-8 border-t border-[#181a20] text-center">
           <p className="text-[12px] text-[#4b5563]">
-            © 2026 KNIGHT. Todos os direitos reservados.
+            © 2026 SAGAZzz. Todos os direitos reservados.
           </p>
         </div>
       </footer>

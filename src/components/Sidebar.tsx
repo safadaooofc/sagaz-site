@@ -20,8 +20,7 @@ export function Sidebar({ user }: { user?: any }) {
   return (
     <aside className="w-64 bg-[#0f1115] h-full hidden md:flex flex-col border-r border-[#1f2229] shrink-0 font-sans z-50">
       <div className="p-6 flex items-center gap-3">
-        <div className="w-10 h-10 bg-[#eab308] rounded flex items-center justify-center font-black text-2xl text-black">K</div>
-        <span className="font-black text-xl text-white tracking-tight leading-tight">KNIGHT<br/><span className="text-[11px] text-[#9ca3af] font-normal tracking-normal">Cartões Digitais</span></span>
+        <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-10 w-auto object-contain" />
       </div>
 
       <div className="flex-1 overflow-y-auto hide-scrollbar px-4 py-2 space-y-4">
@@ -94,7 +93,7 @@ export function Sidebar({ user }: { user?: any }) {
       </div>
 
       <div className="p-4 space-y-3">
-        <a href="https://discord.gg/sagaz" target="_blank" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
+        <a href="https://discord.gg/sagazzz" target="_blank" className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5865F2] hover:bg-[#4752C4] text-white rounded-full font-bold text-sm transition-colors">
           <MessageSquare size={18} />
           Juntar-se ao Discord
         </a>

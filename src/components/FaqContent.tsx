@@ -62,8 +62,7 @@ export function FaqContent({ isPublic = false }: { isPublic?: boolean }) {
       {isPublic && (
         <div className="flex justify-between items-center mb-10 pb-6 border-b border-[#1f2229]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#eab308] rounded flex items-center justify-center font-black text-2xl text-black">K</div>
-            <span className="font-black text-xl text-white tracking-tight">KNIGHT</span>
+            <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-10 w-auto object-contain" />
           </div>
           <Link href="/login" className="bg-[#eab308] text-[#0f1115] font-bold text-[13px] px-6 py-2.5 rounded-lg">
             Entrar
@@ -169,7 +168,7 @@ export function FaqContent({ isPublic = false }: { isPublic?: boolean }) {
         <h3 className="font-bold text-white text-[15px] mb-2">Aprovou? Envie suas avaliações!</h3>
         <p className="text-[13px] text-[#9ca3af] mb-4">Precisa de ajuda? Use os canais oficiais no Discord</p>
         <div className="flex justify-center gap-4">
-          <a href="https://discord.gg/sagaz" target="_blank" className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-[13px] px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2">
+          <a href="https://discord.gg/sagazzz" target="_blank" className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold text-[13px] px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2">
             <MessageSquare size={16} /> Discord
           </a>
         </div>

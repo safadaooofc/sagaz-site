@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "KNIGHT",
-  description: "Plataforma para compra de cartões de forma simples, segura e instantânea",
+  title: "SAGAZzz",
+  description: "A sua plataforma de compra de cartões e contas digitais.",
   icons: {
     icon: "/card-icon.svg",
   }
