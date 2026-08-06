@@ -20,7 +20,7 @@ export function Sidebar({ user }: { user?: any }) {
   return (
     <aside className="w-64 bg-[#0f1115] h-full hidden md:flex flex-col border-r border-[#1f2229] shrink-0 font-sans z-50">
       <div className="p-6 flex items-center gap-3">
-        <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-10 w-auto object-contain" />
+        <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-6 w-auto object-contain" />
       </div>
 
       <div className="flex-1 overflow-y-auto hide-scrollbar px-4 py-2 space-y-4">
