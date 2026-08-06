@@ -43,7 +43,7 @@ export function MobileMenu() {
       >
         <div className="p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-10 w-auto object-contain" />
+            <img src="/assets/images/logo-sagazzz-azul.png" alt="Sagazzz Logo" className="h-6 w-auto object-contain" />
           </div>
           <button onClick={closeMenu} className="text-[#9ca3af] hover:text-white">
             <X size={20} />
