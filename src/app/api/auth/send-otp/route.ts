@@ -94,7 +94,7 @@ export async function POST(req: Request) {
     const emailHtml = `
       <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; background-color: #0f1115; color: #ffffff; padding: 40px 20px; text-align: center; border-radius: 8px;">
         <div style="max-width: 500px; margin: 0 auto; background-color: #181a20; padding: 40px; border-radius: 12px; border: 1px solid #262933;">
-          <h1 style="color: #ffffff; font-size: 28px; margin-bottom: 8px; letter-spacing: -1px;">KNIGHT</h1>
+          <h1 style="color: #ffffff; font-size: 28px; margin-bottom: 8px; letter-spacing: -1px;">SAGAZzz</h1>
           <p style="color: #9ca3af; font-size: 16px; margin-bottom: 32px;">Código de Verificação de Segurança</p>
           
           <div style="background-color: #0f1115; border: 1px solid #262933; padding: 24px; border-radius: 8px; margin-bottom: 32px;">
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
     `;
 
     const { data, error } = await resend.emails.send({
-      from: 'KNIGHT <onboarding@resend.dev>', // Change onboarding@resend.dev to your verified domain later
+      from: 'SAGAZzz <onboarding@resend.dev>', // Change onboarding@resend.dev to your verified domain later
       to: [actualEmail],
       subject: `Seu código de verificação é ${code}`,
       html: emailHtml,

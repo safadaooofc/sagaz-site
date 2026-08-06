@@ -62,7 +62,7 @@ export function RedeemClient() {
             <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
-                placeholder="Ex: KNIGHT-BOOST-2025"
+                placeholder="Ex: SAGAZzz-BOOST-2025"
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 className="flex-1 bg-[#0f1115] border border-[#1f2229] rounded-lg px-4 py-3 text-white placeholder-[#4b5563] focus:border-[#eab308] focus:outline-none transition-colors"

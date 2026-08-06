@@ -37,16 +37,16 @@ export async function sendResetCodeEmail(email: string, code: string) {
         </p>
       </div>
       <div style="padding: 20px; text-align: center; background-color: #020617; font-size: 12px; color: #475569;">
-        © ${new Date().getFullYear()} Sagaz. Todos os direitos reservados.
+        © ${new Date().getFullYear()} SAGAZzz. Todos os direitos reservados.
       </div>
     </div>
   `;
 
   try {
     await transporter.sendMail({
-      from: `"Sagaz Suporte" <${process.env.SMTP_USER}>`,
+      from: `"SAGAZzz Suporte" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: "Seu código de recuperação de senha - Sagaz",
+      subject: "Seu código de recuperação de senha - SAGAZzz",
       html: htmlTemplate,
     });
     return { success: true };

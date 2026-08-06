@@ -9,7 +9,7 @@ export async function generateReferralCode() {
   const session = await auth();
   if (!session?.user?.id) return { error: "Não autorizado" };
 
-  const code = "KNIGHT-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+  const code = "SAGAZzz-" + Math.random().toString(36).substring(2, 8).toUpperCase();
   
   await prisma.user.update({
     where: { id: session.user.id },

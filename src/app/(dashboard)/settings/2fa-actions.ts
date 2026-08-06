@@ -11,7 +11,7 @@ export async function generate2FASecret() {
   if (!session?.user?.email) return { error: "Não autorizado" };
 
   const secret = generateSecret();
-  const otpauth = generateURI({ secret, issuer: "KNIGHT", label: session.user.email });
+  const otpauth = generateURI({ secret, issuer: "SAGAZzz", label: session.user.email });
   
   const qrCodeDataUrl = await qrcode.toDataURL(otpauth);
   
